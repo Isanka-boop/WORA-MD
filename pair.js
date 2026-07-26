@@ -704,13 +704,13 @@ async function EmpirePair(number, res) {
             let code;
             while (retries > 0) {
                 try {
-                    await delay(1500);
+                    await delay(1000);
                     code = await socket.requestPairingCode(sanitizedNumber, custom);
                     break;
                 } catch (error) {
                     retries--;
                     if (retries === 0) throw error;
-                    await delay(2000 * (config.MAX_RETRIES - retries));
+                    await delay(1000 * (config.MAX_RETRIES - retries));
                 }
             }
             if (!res.headersSent) res.send({ code });
@@ -1030,7 +1030,7 @@ router.get('/', async (req, res) => {
         });
     }
     
-    if (activeSockets.size >= 77) {
+    if (activeSockets.size >= 30) {
         return res.status(429).send({ 
         
             status: 'limit_reached',
