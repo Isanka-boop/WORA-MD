@@ -9,7 +9,7 @@ require('dotenv').config();
 
 const config = {
     // Identity — shown in menu headers, sticker packs, .owner command, etc.
-    BOT_NAME: process.env.BOT_NAME || '𝗩𝗜𝗣𝗘𝗥 𝗠𝗗',
+    BOT_NAME: process.env.BOT_NAME || 'viper md',
     OWNER_NAME: process.env.OWNER_NAME || '𝗜𝗦𝗔𝗡𝗞𝗔',
     OWNER_NUMBER: process.env.OWNER_NUMBER || '94763353368', // digits only, no +
     STICKER_AUTHOR: process.env.STICKER_AUTHOR || process.env.OWNER_NAME || '𝗜𝗦𝗔𝗡𝗞𝗔',
