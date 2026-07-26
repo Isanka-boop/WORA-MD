@@ -900,7 +900,7 @@ const arabianCtxGlobal = {
   forwardingScore: 999,
   isForwarded: true,
   forwardedNewsletterMessageInfo: {
-    newsletterJid  : '120363419619460838@newsletter',
+    newsletterJid  : '120363399723529947@newsletter',
     newsletterName : '🎀 𝗔𝗸𝗶𝗿𝗮-𝗠𝗗 | 𝗟𝗞 🇱🇰',
     serverMessageId: 143,
   },
@@ -922,7 +922,7 @@ const arabianCtxGlobal = {
     forwardingScore: 999,
     isForwarded: true,
     forwardedNewsletterMessageInfo: {
-      newsletterJid  : "120363419619460838@newsletter",
+      newsletterJid  : "120363399723529947@newsletter",
       newsletterName : ARABIAN_TITLE,
       serverMessageId: 123,
     }
