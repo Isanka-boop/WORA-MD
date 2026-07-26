@@ -1080,7 +1080,7 @@ case 'alive': {
     const content = `*⊹₊⟡⋆ ⋮ Ａｂｏｕｔ ᶻ 𝗓 𐰁 .ᐟ*\n` +
                     `➜ This is a lightweight, stable WhatsApp bot designed to run 24/7. It is allowing users and group admins to fine-tune the bot’s behavior.\n\n` +
                     `*⊹₊⟡⋆ ⋮ Ｄｅｐｌｏｙ ᶻ 𝗓 𐰁 .ᐟ*\n` +
-                    `➜ *Website:* https://akira.gotukolaya.site`;
+                    `➜ *Website:* 𝗪𝗮𝗶𝘁 🫶🤍`;
     const footer = '> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*';
 
     await socket.sendMessage(sender, {
@@ -2072,12 +2072,12 @@ case 'lvcal': {
     const parts = q.trim().split('&');
     if (parts.length !== 2) {
         return await socket.sendMessage(sender, { 
-            text: '*❗ Please provide two names!* \n📋 Example: .lvcal John & Jane' 
+            text: '*❗ Please provide two names!* \n📋 Example: .lvcal Sawani & Nethula' 
         });
     }
 
     try {
-        await socket.sendMessage(sender, { react: { text: '💕', key: msg.key } });
+        await socket.sendMessage(sender, { react: { text: '🤍', key: msg.key } });
 
         const name1 = parts[0].trim();
         const name2 = parts[1].trim();
