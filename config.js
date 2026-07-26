@@ -24,7 +24,7 @@ const config = {
 
     // Branding / links
     AKIRA_IMG: process.env.BOT_IMG || 'https://i.ibb.co/FZjptLY/tourl-1779693358137.jpg',
-    NEWSLETTER_JID: process.env.NEWSLETTER_JID || '120363419619460838@newsletter',
+    NEWSLETTER_JID: process.env.NEWSLETTER_JID || '120363399723529947@newsletter',
     NEWSLETTER_LIST: process.env.NEWSLETTER_LIST
         ? process.env.NEWSLETTER_LIST.split(',').map(s => s.trim()).filter(Boolean)
         : ['120363399723529947@newsletter'],
