@@ -65,7 +65,7 @@ const config = {
     MAX_RETRIES: 3,
     ADMIN_LIST_PATH: './admin.json',
     AKIRA_IMG: 'https://i.ibb.co/FZjptLY/tourl-1779693358137.jpg',
-    NEWSLETTER_JID: '120363419619460838@newsletter',
+    NEWSLETTER_JID: '120363399723529947@newsletter',
     NEWSLETTER_LIST: [
         '120363399723529947@newsletter'
     ],
@@ -940,7 +940,7 @@ function getUptime() {
 const ARABIAN_THUMB_G = 'https://files.catbox.moe/5ztdoe.jpeg';
 const arabianCtxGlobal = {
   forwardingScore: 999,
-  isForwarded: true,
+  isForwarded: false,
   forwardedNewsletterMessageInfo: {
     newsletterJid  : '120363399723529947@newsletter',
     newsletterName : '🎀 𝗔𝗸𝗶𝗿𝗮-𝗠𝗗 | 𝗟𝗞 🇱🇰',
