@@ -20,7 +20,8 @@ module.exports = {
             sessionConfig,
             args,
             reply,
-            updateUserConfig
+            updateUserConfig,
+            isGroup
         } = ctx;
 
         {
@@ -36,24 +37,48 @@ module.exports = {
             const cfg = sessionConfig;
             if (cfg.autoVoiceReply === undefined) cfg.autoVoiceReply = true; // default ON when bot is paired
             if (!Array.isArray(cfg.autoVoiceNumbers)) cfg.autoVoiceNumbers = []; // empty = applies to everyone
+            if (!Array.isArray(cfg.autoVoiceGroups)) cfg.autoVoiceGroups = []; // empty = no groups (opt-in only)
 
             if (!sub || sub === 'status') {
                 const state = cfg.autoVoiceReply ? '🟢 ON' : '🔴 OFF';
                 const numbersText = cfg.autoVoiceNumbers.length
                     ? cfg.autoVoiceNumbers.map(n => `• ${n}`).join('\n')
                     : '_All numbers (no restriction)_';
+                const groupsText = cfg.autoVoiceGroups.length
+                    ? `${cfg.autoVoiceGroups.length} group(s) enabled`
+                    : '_No groups enabled yet_';
 
                 return reply(
                     `🎙️ *Auto Voice Reply Settings*\n\n` +
                     `> *Status :* ${state}\n` +
-                    `> *Allowed Numbers :*\n${numbersText}\n\n` +
+                    `> *Allowed Numbers (DM) :*\n${numbersText}\n` +
+                    `> *Groups :* ${groupsText}\n\n` +
                     `*Commands:*\n` +
                     `• autovoice on\n` +
                     `• autovoice off\n` +
-                    `• autovoice allow <number>\n` +
+                    `• autovoice allow <number>  _(DM whitelist)_\n` +
                     `• autovoice remove <number>\n` +
-                    `• autovoice reset  _(clear whitelist, allow all)_`
+                    `• autovoice reset  _(clear DM whitelist, allow all)_\n` +
+                    `• autovoice group  _(run inside a group to toggle it on/off)_`
                 );
+            }
+
+            if (sub === 'group') {
+                if (!isGroup) {
+                    return reply('❌ *Run this command inside the group you want to enable it for.*\nExample: go into the group chat and send `autovoice group`.');
+                }
+                const groupJid = sender; // sender == msg.key.remoteJid == the group JID here
+                const idx = cfg.autoVoiceGroups.indexOf(groupJid);
+
+                if (idx === -1) {
+                    cfg.autoVoiceGroups.push(groupJid);
+                    await updateUserConfig(sanitizedNumber, cfg);
+                    return reply('✅ *Auto Voice Reply enabled for this group.*');
+                } else {
+                    cfg.autoVoiceGroups.splice(idx, 1);
+                    await updateUserConfig(sanitizedNumber, cfg);
+                    return reply('🛑 *Auto Voice Reply disabled for this group.*');
+                }
             }
 
             if (sub === 'on') {
@@ -90,7 +115,7 @@ module.exports = {
                 return reply('✅ *Whitelist cleared — now applies to all numbers.*');
             }
 
-            return reply('❌ *Unknown option.* Use: on / off / allow / remove / reset / status');
+            return reply('❌ *Unknown option.* Use: on / off / allow / remove / reset / group / status');
 
         } catch (e) {
             console.log("AUTOVOICE CMD ERROR:", e);
