@@ -13,121 +13,20 @@ module.exports = {
             sender,
             msg,
             args,
-            body,
             reply,
             yts,
             axios,
-            moment,
             arabianCtx
         } = ctx;
 
 
         try {
 
-            global.songCache = global.songCache || {};
-
-
-            // Button Response Handler
-            const buttonId =
-                msg.message?.buttonsResponseMessage?.selectedButtonId ||
-                msg.message?.templateButtonReplyMessage?.selectedId ||
-                body;
-
-
-
-            // Download Button Click
-            if (buttonId === "download_mp3") {
-
-
-                const song = global.songCache[sender];
-
-
-                if (!song) {
-                    return reply("❌ Song expired. Please search again!");
-                }
-
-
-
-                try {
-                    await socket.sendMessage(sender,{
-                        react:{
-                            text:"⬇️",
-                            key:msg.key
-                        }
-                    });
-                } catch (_) {}
-
-
-
-                const apiUrl =
-                `https://whiteshadow-x-api.onrender.com/api/download/ytmp3?url=${encodeURIComponent(song.url)}&quality=320&apitoken=aWK0z4`;
-
-
-
-                const response = await axios.get(apiUrl);
-
-
-
-                const downloadUrl =
-                    response.data.result?.download ||
-                    response.data.result?.url ||
-                    response.data.download ||
-                    response.data.download_url ||
-                    response.data.url;
-
-
-
-                if (!downloadUrl) {
-                    return reply("❌ MP3 download link not found!");
-                }
-
-
-
-                await socket.sendMessage(sender,{
-
-                    audio:{
-                        url:downloadUrl
-                    },
-
-                    mimetype:"audio/mpeg",
-
-                    fileName:`${song.title}.mp3`,
-
-                    ptt:false
-
-                },{
-                    quoted:msg
-                });
-
-
-
-                try {
-                    await socket.sendMessage(sender,{
-                        react:{
-                            text:"✅",
-                            key:msg.key
-                        }
-                    });
-                } catch (_) {}
-
-                return;
-            }
-
-
-
-
-
-            // Search Song
-
             const query = args.join(" ");
-
-
 
             if (!query) {
                 return reply("🎵 *Please send a song name!*");
             }
-
-
 
 
             try {
@@ -141,13 +40,10 @@ module.exports = {
 
 
 
-
-
+            // Search YouTube
             const search = await yts(query);
 
-
             const video = search.videos[0];
-
 
 
             if (!video) {
@@ -156,33 +52,32 @@ module.exports = {
 
 
 
-
-            global.songCache[sender] = {
-
-                url: video.url,
-
-                title: video.title,
-
-                created: Date.now()
-
-            };
+            const apiUrl =
+            `https://whiteshadow-x-api.onrender.com/api/download/ytmp3?url=${encodeURIComponent(video.url)}&quality=320&apitoken=aWK0z4`;
 
 
 
+            const response = await axios.get(apiUrl);
 
 
-            const date = moment()
-                .tz("Asia/Colombo")
-                .format("YYYY-MM-DD");
+
+            const downloadUrl =
+                response.data.result?.download ||
+                response.data.result?.url ||
+                response.data.download ||
+                response.data.download_url ||
+                response.data.url;
 
 
-            const time = moment()
-                .tz("Asia/Colombo")
-                .format("HH:mm:ss");
+
+            if (!downloadUrl) {
+                return reply("❌ MP3 download link not found!");
+            }
 
 
 
 
+            // Send song info
 
             const caption =
 `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗠𝘂𝘀𝗶𝗰 🎀] ❞*
@@ -195,20 +90,11 @@ module.exports = {
 
 > 👀 *Views:* ${video.views.toLocaleString()}
 
-> 📅 *Date:* ${date}
 
-> ⌚ *Time:* ${time}
-
-
-> ✨ Powered By Akira Girl Bot`;
+> ✨ 𝐎𝐰𝐧𝐞𝐫 𝐁𝐲 𝐂𝐡𝐚𝐦𝐨𝐝 ...`;
 
 
 
-
-
-
-
-            // Send Thumbnail
 
             await socket.sendMessage(sender,{
 
@@ -229,37 +115,34 @@ module.exports = {
 
 
 
-
-            // Send Button Separately
+            // Send MP3 directly
 
             await socket.sendMessage(sender,{
 
-                text:"🎵 Download your song below",
+                audio:{
+                    url:downloadUrl
+                },
 
-                footer:"🎀 Akira Music Downloader",
+                mimetype:"audio/mpeg",
 
-                buttons:[
+                fileName:`${video.title}.mp3`,
 
-                    {
-                        buttonId:"download_mp3",
-
-                        buttonText:{
-                            displayText:"🎵 Download MP3"
-                        },
-
-                        type:1
-                    }
-
-                ],
-
-                headerType:1,
-
-                contextInfo:arabianCtx()
+                ptt:false
 
             },{
                 quoted:msg
             });
 
+
+
+            try {
+                await socket.sendMessage(sender,{
+                    react:{
+                        text:"✅",
+                        key:msg.key
+                    }
+                });
+            } catch (_) {}
 
 
 
