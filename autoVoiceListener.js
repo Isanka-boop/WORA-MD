@@ -36,7 +36,7 @@ const AUTO_VOICE_REPLIES = [
     {
         keywords: ['good morning', 'gm'],
         url: 'https://files.catbox.moe/2o6k2l.ogg',
-        text: '🦋🪷'
+        text: '*සුබ උදෑසනක්..*'
     },
     {
         keywords: ['mokada karanne', 'mk'],
@@ -44,7 +44,7 @@ const AUTO_VOICE_REPLIES = [
         text: 'Mn'
     },
     {
-        keywords: ['පොන්නයා'],
+        keywords: ['Ponnaya'],
         url: '',
         text: '*පොන්නයා හුත්තෝ තොපේ සීයා 🥲*'
     {
