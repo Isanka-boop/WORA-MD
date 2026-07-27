@@ -86,7 +86,8 @@ module.exports = {
         } = ctx;
 
         { // command body (own scope, so locals can shadow ctx names)
-try { await socket.sendMessage(sender, { react: { text: '🍫', key: msg.key } }); } catch (_) {}
+      // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
+      socket.sendMessage(sender, { react: { text: '🍫', key: msg.key } }).catch(() => {});
     const { NiyoXClient } = require("niyox");
     const title = "🎀 *𝗔𝗸𝗶𝗿𝗮 𝗔𝗶 𝗚𝗶𝗿𝗹𝗳𝗿𝗲𝗻𝗱* 🎀";
     const footer = "> *𝐀𝐞𝐬𝐭𝐡𝐚𝐭𝐢𝐜 𝐐𝐮𝐞𝐞𝐧 𝐁𝐲 𝐂𝐡𝐚𝐦𝐨𝐝 🌺*";
@@ -115,8 +116,7 @@ try { await socket.sendMessage(sender, { react: { text: '🍫', key: msg.key } }
         }
 
         await socket.sendMessage(sender, {
-            image: { url: akira },
-            caption: `${title}\n\n${aiResponse}\n\n${footer}`,
+            text: `${title}\n\n${aiResponse}\n\n${footer}`,
             contextInfo: arabianCtx() 
         }, { quoted: msg });
 

@@ -86,7 +86,8 @@ module.exports = {
         } = ctx;
 
         { // command body (own scope, so locals can shadow ctx names)
-try { await socket.sendMessage(sender, { react: { text: '🎀', key: msg.key } }); } catch (_) {}
+      // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
+      socket.sendMessage(sender, { react: { text: '🎀', key: msg.key } }).catch(() => {});
       
       const start = Date.now();
       const ms    = Date.now() - start;
@@ -97,9 +98,9 @@ try { await socket.sendMessage(sender, { react: { text: '🎀', key: msg.key } }
       const slDate = moment().tz('Asia/Colombo').format('YYYY-MM-DD');
       const slTimeNow = moment().tz('Asia/Colombo').format('HH:mm:ss');
 
+      // PERF: plain text instead of image: {url} — no remote fetch + re-upload delay.
       await socket.sendMessage(sender, {
-        image: { url: akira },
-        caption: `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗠𝗲𝗻𝘂 🎀] ¡! ❞*
+        text: `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗠𝗲𝗻𝘂 🎀] ¡! ❞*
 
 ┏━━━━━°⌜ \`赤い糸\` ⌟°━━━━━┓
 ┃👤 *𝚄𝚂𝙴𝚁* : ${pushname}

@@ -103,8 +103,7 @@ const pkg = args[0]?.trim();
                         `> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*`;
 
         await socket.sendMessage(sender, { 
-          image: { url: akira },
-          caption: npmInfo, 
+          text: npmInfo, 
           contextInfo: typeof arabianCtx === 'function' ? arabianCtx() : {} 
         }, { quoted: msg });
 

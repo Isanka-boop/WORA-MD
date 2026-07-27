@@ -89,10 +89,13 @@ module.exports = {
 const ownerNum = '+94763353368';
     const ownerName = 'お 𝐂𝐡𝐚𝐦𝐨𝐝 ࣪𖤐.ᐟ';
     
-    await socket.sendMessage(sender, { react: { text: '🥷', key: msg.key } });
+    // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
+    socket.sendMessage(sender, { react: { text: '🥷', key: msg.key } }).catch(() => {});
 
+    // PERF: dropped the stray image: {url: akira} field — it forced a remote
+    // fetch + re-upload before the contact card could send, and the text
+    // message below already carries the actual info.
     await socket.sendMessage(sender, {
-		image: { url: akira }, 
         contacts: {
             displayName: ownerName,
             contacts: [{

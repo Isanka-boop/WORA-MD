@@ -86,14 +86,18 @@ module.exports = {
         } = ctx;
 
         { // command body (own scope, so locals can shadow ctx names)
-try { await socket.sendMessage(sender, { react: { text: '🍬', key: msg.key } }); } catch (_) {}     
+      // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
+      socket.sendMessage(sender, { react: { text: '🍬', key: msg.key } }).catch(() => {});
+
       const start = Date.now();
       const ms    = Date.now() - start;
-      try { if (pong?.key) await socket.sendMessage(sender, { delete: pong.key }); } catch (_) {}
 
+      // PERF: no image here anymore — an image: {url} attachment forces Baileys
+      // to download the remote image AND re-upload it to WhatsApp before the
+      // message can be sent, adding real network latency to a command that
+      // should be instant. Plain text sends immediately.
       await socket.sendMessage(sender, {
-        image: { url: akira },
-        caption: `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗣𝗶𝗻𝗴 🎀] ¡! ❞*\n\n` +
+        text: `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗣𝗶𝗻𝗴 🎀] ¡! ❞*\n\n` +
 			     `┏━━━━━°⌜ \`赤い糸\` ⌟°━━━━━┓\n` +
                  `┃₊❏❜ ⋮🏓 𝙿𝙾𝙽𝙶 : _pong!_\n` +
                  `┃₊❏❜ ⋮⚡ 𝚂𝙿𝙴𝙴𝙳 : ${ms}ms\n` +

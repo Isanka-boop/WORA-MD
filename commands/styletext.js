@@ -99,7 +99,8 @@ const q = msg.message?.conversation ||
     }
 
     try {
-        await socket.sendMessage(sender, { react: { text: '✨', key: msg.key } });
+        // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
+        socket.sendMessage(sender, { react: { text: '✨', key: msg.key } }).catch(() => {});
 
         const response = await axios.get(`https://www.movanest.xyz/v2/fancytext?word=${encodeURIComponent(textToStyle)}`);
         
@@ -120,12 +121,12 @@ const q = msg.message?.conversation ||
         styledMsg += `*┗━━━━━°⌜ \`赤い糸\` ⌟°━━━━━┛*\n\n`;
         styledMsg += `> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*`;
 
+        // PERF: dropped image: {url: akira} — no remote fetch + re-upload delay.
         await socket.sendMessage(sender, { 
-			image: { url: akira }, 
             text: styledMsg
         }, { quoted: msg });
 
-        await socket.sendMessage(sender, { react: { text: '✅', key: msg.key } });
+        socket.sendMessage(sender, { react: { text: '✅', key: msg.key } }).catch(() => {});
 
     } catch (err) {
         console.error('StyleText API Error:', err);

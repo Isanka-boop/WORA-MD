@@ -86,7 +86,8 @@ module.exports = {
         } = ctx;
 
         { // command body (own scope, so locals can shadow ctx names)
-try { await socket.sendMessage(sender, { react: { text: '🛸', key: msg.key } }); } catch (_) {}
+      // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
+      socket.sendMessage(sender, { react: { text: '🛸', key: msg.key } }).catch(() => {});
 
       const uptime = getUptime();
       const ramUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
@@ -108,9 +109,9 @@ try { await socket.sendMessage(sender, { react: { text: '🛸', key: msg.key } }
 		              `┗━━━━━°⌜ \`赤い糸\` ⌟°━━━━━┛\n\n` +
                       `> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*`;
 
+      // PERF: plain text instead of image: {url} — no remote fetch + re-upload delay.
       await socket.sendMessage(sender, {
-        image: { url: akira },
-        caption: sysInfo,
+        text: sysInfo,
         contextInfo: arabianCtx()
       }, { quoted: msg });
         }
