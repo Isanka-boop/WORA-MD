@@ -1,182 +1,103 @@
 /*
-  Command: menu, list, panel
-  Auto-extracted from the original pair.js command switch.
+Command: menu, list, panel
+AKIRA GIRL MD - Aesthetic Menu v2
 */
 module.exports = {
-    name: 'menu',
-    aliases: ['list', 'panel'],
-    execute: async (ctx) => {
-        const {
-            socket,
-            number,
-            sanitizedNumber,
-            sessionConfig,
-            recentCallers,
-            msg,
-            type,
-            quoted,
-            body,
-            text,
-            isCmd,
-            sender,
-            nowsender,
-            senderNumber,
-            developers,
-            botNumber,
-            isbot,
-            isOwner,
-            isAshuu,
-            isGroup,
-            parts,
-            command,
-            args,
-            match,
-            groupMetadata,
-            participants,
-            groupAdmins,
-            isBotAdmins,
-            isAdmins,
-            reply,
-            getUptime,
-            ARABIAN_THUMB_G,
-            arabianCtxGlobal,
-            ARABIAN_TITLE,
-            ARABIAN_SUB,
-            arabianCtx,
-            downloadQuotedMedia,
-            sendReply,
-            replyFq,
-            config,
-            akira,
-            formatMessage,
-            fetchJson,
-            runtime,
-            resize,
-            capital,
-            createSerial,
-            deleteSession,
-            loadUserConfig,
-            updateUserConfig,
-            uploadToCatbox,
-            saveMediaToCatbox,
-            saveSession,
-            restoreSession,
-            destroySocket,
-            Session,
-            mongoose,
-            axios,
-            yts,
-            ytmp3,
-            ytmp4,
-            Jimp,
-            moment,
-            os,
-            fecth,
-            ffmpeg,
-            crypto,
-            path,
-            fs,
-            exec,
-            activeSockets,
-            socketCreationTime,
-            loadAdmins,
-            getSriLankaTimestamp,
-            images,
-            EmpirePair
-        } = ctx;
+name: 'menu',
+aliases: ['list', 'panel'],
+execute: async (ctx) => {
+const {
+socket, msg, sender, arabianCtx, moment
+} = ctx;
 
-        { // command body (own scope, so locals can shadow ctx names)
-      // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
-      socket.sendMessage(sender, { react: { text: '🎀', key: msg.key } }).catch(() => {});
-      
-      const start = Date.now();
-      const ms    = Date.now() - start;
-      const pushname = msg.pushName || 'User';
-      const readMore = String.fromCharCode(8206).repeat(4000);
-      
+socket.sendMessage(sender, { react: { text: '🎀', key: msg.key } }).catch(() => {});
 
-      const slDate = moment().tz('Asia/Colombo').format('YYYY-MM-DD');
-      const slTimeNow = moment().tz('Asia/Colombo').format('HH:mm:ss');
+const pushname = msg.pushName || 'User';
+const slDate = moment().tz('Asia/Colombo').format('YYYY-MM-DD');
+const slTimeNow = moment().tz('Asia/Colombo').format('HH:mm:ss');
 
-      // PERF: plain text instead of image: {url} — no remote fetch + re-upload delay.
-      await socket.sendMessage(sender, {
-  text: `
-╭━━━━━━━━━━━━━━━━━━━━━━━╮
-┃      🎀 𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 🎀
-┃         𝑾𝒉𝒂𝒕𝒔𝑨𝒑𝒑 𝑩𝒐𝒕
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
+// දවසින් දවස වෙනස් වෙන about quotes
+const aboutList = [
+  "🌸 \"Soft girls run the world with kindness and code.\"",
+  "💖 \"Be the girl who decided to go for it.\"",
+  "🦋 \"Akira is not just a bot, she's your vibe.\"",
+  "✨ \"Dream big, code harder, glow up daily.\"",
+  "🌙 \"Late nights + Coffee + Code = Magic\"",
+  "🎀 \"Elegance is the only beauty that never fades.\"",
+  "👑 \"Built with love by Chamod, for queens like you.\"",
+  "💫 \"Your bot, your rules, your aesthetic.\""
+];
+const dayIndex = new Date().getDate() % aboutList.length; // දවස අනුව වෙනස් වෙනවා
+const dailyAbout = aboutList[dayIndex];
 
-╭─〔 👤 𝐔𝐒𝐄𝐑 〕─⬣
-│ 👑 Name    : ${pushname}
-│ 📦 Version : V1.0.0
-│ 📅 Date    : ${slDate}
-│ ⏰ Time    : ${slTimeNow}
-╰────────────⬣
+const menuText = `
+♡︎ ━━━━━━━ 𓆩赤い糸𓆪 ━━━━━━━ ♡︎
+┃ 🎀 𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 𝐌𝐃 🎀
+┃ 𝑨𝒆𝒔𝒕𝒉𝒂𝒕𝒊𝒄 𝑾𝑨 𝑩𝒐𝒕
+♡︎ ━━━━━━━━━━━━━━━ ♡︎
 
-╭─〔 🏠 𝐌𝐀𝐈𝐍 〕─⬣
-│ ✦ .menu
-│ ✦ .system
-│ ✦ .ping
-│ ✦ .alive
-│ ✦ .owner
-╰────────────⬣
+╭─ 𓆩👤𓆪 𝐏𝐑𝐎𝐅𝐈𝐋𝐄
+│ 👑 𝐍𝐚𝐦𝐞 : ${pushname}
+│ 📦 𝐕𝐞𝐫𝐬𝐢𝐨𝐧: 𝐕1.0.0
+│ 📅 𝐃𝐚𝐭𝐞 : ${slDate}
+│ ⏰ 𝐓𝐢𝐦𝐞 : ${slTimeNow}
+╰─────────────────♡
 
-╭─〔 ⬇️ 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 〕─⬣
-│ 🎵 .song
-│ 🎥 .video
-│ 📘 .fb
-│ 🎶 .tt
-╰────────────⬣
+╭─ 𓆩🏠𓆪 𝐌𝐀𝐈𝐍 𝐂𝐌𝐃𝐙
+│ ✧.menu • Command List
+│ ✧.system • System Info
+│ ✧.ping • Bot Speed
+│ ✧.alive • Check Alive
+│ ✧.owner • Owner Info
+╰─────────────────♡
 
-╭─〔 🛠️ 𝐓𝐎𝐎𝐋𝐒 〕─⬣
-│ ✨ .vv
-│ 🖼️ .sticker
-│ 🔠 .fancy
-│ 👤 .getdp
-│ 📦 .npm
-│ 🌄 .img
-│ ⚙️ .mode
-│🫶  .welcome
-╰────────────⬣
+╭─ 𓆩⬇️𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
+│ ✧.song • Download Song
+│ ✧.video • Download Video
+│ ✧.fb • Facebook DL
+│ ✧.tt • TikTok DL
+╰─────────────────♡
 
-╭─〔 👥 𝐆𝐑𝐎𝐔𝐏 〕─⬣
-│ 📢 .tagall
-│ 👻 .hidetag
-│ ➕ .add
-│ ❌ .kick
-│ 👮 .tagadmin
-│ ⬆️ .promote
-│ ⬇️ .demote
-│ 🔒 .lockgroup
-│ 🔓 .unlockgroup
-│ 🔇 .mute
-│ 🔊 .unmute
-│ 📝 .setname
-│ 📄 .setdesc
-│ 🖼️ .seticon
-│ 🔗 .linkgroup
-│ ♻️ .revokelink
-│ 🚪 .leave
-╰────────────⬣
+╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
+│ ✧.vv • ViewOnce Opener
+│ ✧.sticker • Image > Sticker
+│ ✧.fancy • Fancy Text
+│ ✧.getdp • Get Profile Pic
+│ ✧.npm • NPM Search
+│ ✧.img • Image Search
+│ ✧.mode • Bot Mode
+│ ✧.welcome • Welcome Msg
+╰─────────────────♡
 
-╭─〔 🤖 𝐀𝐈 & 𝐅𝐔𝐍 〕─⬣
-│ 💬 .akira
-│ ❤️ .lvcal
-│ 🔞 .hentai
-│ 💻 .hack
-╰────────────⬣
+╭─ 𓆩👥𓆪 𝐆𝐑𝐎𝐔𝐏 𝐂𝐌𝐃𝐙
+│ ✧.tagall.hidetag.add.kick
+│ ✧.tagadmin.promote.demote
+│ ✧.lockgroup.unlockgroup
+│ ✧.mute.unmute.setname
+│ ✧.setdesc.seticon.linkgroup
+│ ✧.revokelink.leave
+╰─────────────────♡
 
-━━━━━━━━━━━━━━━━━━━━━━━
-🌸 𝑻𝒉𝒂𝒏𝒌 𝒀𝒐𝒖 𝒇𝒐𝒓 𝑼𝒔𝒊𝒏𝒈
-      🎀 𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 🎀
-━━━━━━━━━━━━━━━━━━━━━━━
-👑 Developer : *𝐂𝐡𝐚𝐦𝐨𝐝*
-💖 Made With 𝐂𝐡𝐚𝐦𝐨𝐝
-━━━━━━━━━━━━━━━━━━━━━━━
-`,
-  contextInfo: arabianCtx()
+╭─ 𓆩🤖𓆪 𝐀𝐈 & 𝐅𝐔𝐍
+│ ✧.akira • Talk to Akira AI
+│ ✧.lvcal • Love Calculator
+│ ✧.hentai• 18+ Content
+│ ✧.hack • Fake Hack
+╰─────────────────♡
+
+━━━━━━━━━━━━━━━
+💌 𝐀𝐁𝐎𝐔𝐓 𝐓𝐎𝐃𝐀𝐘
+${dailyAbout}
+━━━━━━━━━━━━━━━
+
+🌸 𝑻𝒉𝒂𝒏𝒌 𝒀𝒐𝒖 𝒇𝒐𝒓 𝑼𝒔𝒊𝒏𝒈 𝑨𝒌𝒊𝒓𝒂 🌸
+👑 𝑫𝒆𝒗 : 𝐂𝐡𝐚𝐦𝐨𝐝 | 💖 𝑴𝒂𝒅𝒆 𝒘𝒊𝒕𝒉 𝑳𝒐𝒗𝒆
+`;
+
+await socket.sendMessage(sender, {
+text: menuText,
+contextInfo: arabianCtx()
 }, { quoted: msg });
-        }
-    }
-};
 
+}
+};
