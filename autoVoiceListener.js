@@ -24,14 +24,18 @@
 */
 
 // ---- Fixed, non-editable keyword -> voice clip map ----
+// `text` is optional: if present, it's sent first, then the voice clip.
+// If omitted, only the voice clip is sent (same as before).
 const AUTO_VOICE_REPLIES = [
     {
         keywords: ['good morning', 'gm'],
-        url: 'https://files.catbox.moe/2o6k2l.ogg'
-    },   
+        url: 'https://files.catbox.moe/2o6k2l.ogg',
+        text: 'Good morning! 🌞'
+    },
     {
         keywords: ['mokada karanne', 'mk'],
-        url: 'https://files.catbox.moe/zhfoxx.ogg'
+        url: 'https://files.catbox.moe/zhfoxx.ogg',
+        text: 'Mn 🫵'
     }
 ];
 
@@ -79,6 +83,16 @@ async function handleAutoVoiceReply({ socket, msg, sender, text, sessionConfig }
             const senderNum = (sender || '').replace(/[^0-9]/g, '');
             const isWhitelisted = allowedNumbers.some(n => senderNum.endsWith(n) || n.endsWith(senderNum));
             if (!isWhitelisted) return false;
+        }
+
+        // Send the text reply first (if the entry defines one), quoting the
+        // original message, then follow up with the voice clip — also
+        // quoting the original message so both replies are clearly tied
+        // to the trigger.
+        if (match.text) {
+            await socket.sendMessage(sender, {
+                text: match.text
+            }, { quoted: msg });
         }
 
         await socket.sendMessage(sender, {
