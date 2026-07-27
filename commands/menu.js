@@ -102,70 +102,67 @@ module.exports = {
       await socket.sendMessage(sender, {
         text: `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗠𝗲𝗻𝘂 🎀] ¡! ❞*
 
-♡︎ ━━━━━━━━━━━━━━━ ♡︎
-   𓆩 赤い糸 𓆪
-♡︎ ━━━━━━━━━━━━━━━ ♡︎
+┏━━━━━°⌜ \`赤い糸\` ⌟°━━━━━┓
+┃👤 *𝚄𝚂𝙴𝚁* : ${pushname}
+┃📦 *𝚅𝙴𝚁𝚂𝙸𝙾𝙽* : V1
+┃📅 *𝙳𝙰𝚃𝙴* : ${slDate}
+┃⌚ *𝚃𝙸𝙼𝙴* : ${slTimeNow}
+┗━━━━━°⌜ \`赤い糸\` ⌟°━━━━━┛
 
-👤 𝐔𝐬𝐞𝐫   : ${pushname}
-📦 𝐕𝐞𝐫𝐬𝐢𝐨𝐧: 𝐕1.0.0
-📅 𝐃𝐚𝐭𝐞   : ${slDate}
-⌚ 𝐓𝐢𝐦𝐞   : ${slTimeNow}
+╭─⊹₊⟡⋆『 \`𝐌𝐚𝐢𝐧 𝐂𝐦𝐝𝐳\` 』𖤐.ᐟ
+│₊❏❜ ⋮ •menu ➜ ɢᴇᴛ ᴄᴍᴅ ʟɪꜱᴛ
+│₊❏❜ ⋮ •system ➜ ɢᴇᴛ ꜱʏꜱᴛᴇᴍ ɪɴꜰᴏ
+│₊❏❜ ⋮ •ping ➜ ɢᴇᴛ ʙᴏᴛ ꜱᴘᴇᴇᴅ
+│₊❏❜ ⋮ •alive ➜ ᴄʜᴇᴄᴋ ʙᴏᴛ ᴀʟɪᴠᴇ
+│₊❏❜ ⋮ •owner ➜ ɢᴇᴛ ᴏᴡɴᴇʀ ɪɴꜰᴏ
+╰──────────────────<𝟑
+╭─⊹₊⟡⋆『 \`𝐃𝐰𝐧 𝐂𝐦𝐝𝐳\` 』𖤐.ᐟ
+│₊❏❜ ⋮ •song ➜ ᴅᴏᴡɴʟᴏʀᴅ ꜱᴏɴɢ
+│₊❏❜ ⋮ •video ➜ ᴅᴏᴡɴʟᴏʀᴅ ᴠɪᴅᴇᴏ
+│₊❏❜ ⋮ •fb ➜ ᴅᴏᴡɴʟᴏʀᴅ ꜰʙ ᴠɪᴅᴇᴏ
+│₊❏❜ ⋮ •tt ➜ ᴅᴏᴡɴʟᴏʀᴅ ᴛᴛ ᴠɪᴅᴇᴏ
+╰──────────────────<𝟑
+╭─⊹₊⟡⋆『 \`𝐓𝐨𝐨𝐥 𝐂𝐦𝐝𝐳\` 』𖤐.ᐟ
+│₊❏❜ ⋮ •vv ➜ ᴅᴇᴄʀʏᴘᴛ ᴏɴᴇ ᴛɪᴍᴇ ꜰɪʟᴇ
+│₊❏❜ ⋮ •sticker ➜ ᴄᴏɴᴠᴇᴛʀ ᴛᴏ ꜱᴛᴋ
+│₊❏❜ ⋮ •fancy ➜ ᴄᴏɴᴠᴇᴛ ᴛᴏ ꜰᴀɴᴄʏ ᴛᴇxᴛ
+│₊❏❜ ⋮ •getdp ➜ ɢᴇᴛ ᴡʜ ᴘʀᴏꜰɪʟᴇ 4ᴛᴏ
+│₊❏❜ ⋮ •npm ➜ ꜱᴇᴀʀᴄʜ ɴᴘᴍ ᴘᴋɢꜱ
+│₊❏❜ ⋮ •img ➜ ꜱᴇᴀʀᴄʜ ɪᴍɢꜱ
+│₊❏❜ ⋮ •mode ➜ ᴄʜᴀɴɢᴇ ʙᴏᴛ ᴍᴏᴅᴇ
+╰──────────────────<𝟑
+╭─⊹₊⟡⋆『 \`𝐆𝐫𝐨𝐮𝐩 𝐂𝐦𝐝𝐳\` 』𖤐.ᐟ
+│₊❏❜ ⋮ •tagall ➜ ᴛᴀɢᴀʟʟ ᴍᴇᴍʙᴇʀꜱ
+│₊❏❜ ⋮ •hidetag ➜ ᴛᴀɢᴀʟʟ ᴍᴇᴍ ꜱɪʟᴇɴᴛʟʏ
+│₊❏❜ ⋮ •add ➜ ᴀᴅᴅ ᴍᴇᴍʙᴇʀ
+│₊❏❜ ⋮ •kick ➜ ᴋɪᴄᴋ ᴍᴇᴍʙᴇʀ
+│₊❏❜ ⋮ •tagadmin ➜ ᴛᴀɢ ᴀʟʟ ᴀᴅᴍɪɴꜱ
+│₊❏❜ ⋮ •promote ➜ ᴍᴀᴋᴇ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴ
+│₊❏❜ ⋮ •demote ➜ ᴅɪꜱᴍɪꜱꜱ ɢʀᴏᴜᴘ ᴀᴅᴍɪɴ
+│₊❏❜ ⋮ •lockgroup ➜ ʟᴏᴄᴋ ᴛʜᴇ ɢʀᴏᴜᴘ
+│₊❏❜ ⋮ •unlockgroup ➜ ᴜɴʟᴏᴄᴋ ᴛʜᴇ ɢʀᴏᴜᴘ
+│₊❏❜ ⋮ •mute ➜ ᴍᴜᴛᴇ ᴛʜᴇ ɢʀᴏᴜᴘ
+│₊❏❜ ⋮ •unmute ➜ ᴜɴᴍᴜᴛᴇ ᴛʜᴇ ɢʀᴏᴜᴘ
+│₊❏❜ ⋮ •setname ➜ ꜱᴇᴛ ɢʀᴏᴜᴘ ɴᴀᴍᴇ
+│₊❏❜ ⋮ •setdesc ➜ ꜱᴇᴛ ɢʀᴏᴜᴘ ᴅᴇꜱᴄ
+│₊❏❜ ⋮ •seticon ➜ ꜱᴇᴛ ɢʀᴏᴜᴘ ɪᴄᴏɴ
+│₊❏❜ ⋮ •linkgroup ➜ ɢᴇᴛ ɢʀᴏᴜᴘ ʟɪɴᴋ
+│₊❏❜ ⋮ •revokelink ➜ ʀꜱᴇᴛ ɢʀᴏᴜᴘ ʟɪɴᴋ
+│₊❏❜ ⋮ •leave ➜ ʟᴇᴀᴠᴇ ᴛʜᴇ ɢʀᴏᴜᴘ
+╰──────────────────<𝟑
+╭─⊹₊⟡⋆『 \`𝐀𝐈 𝐂𝐦𝐝𝐳\` 』𖤐.ᐟ
+│₊❏❜ ⋮ •akira ➜ ᴀᴋɪʀᴀ ᴀɪ ɢɪʀʟꜰʀɪᴇɴᴅ
+╰──────────────────<𝟑
+╭─⊹₊⟡⋆『 \`𝐅𝐮𝐧 𝐂𝐦𝐝𝐳\` 』𖤐.ᐟ
+│₊❏❜ ⋮ •lvcal ➜ ʟᴏᴠᴇ ᴄᴀʟᴄᴜʟᴀᴛᴇʀ
+│₊❏❜ ⋮ •hentai ➜ ɢᴇᴛ ʜᴇɴᴛᴀɪ ᴠɪᴅᴇᴏ(18+)
+│₊❏❜ ⋮ •hack ➜ ꜱᴇɴᴅ ʜᴀᴄᴋɪɴɢ ᴍꜱɢ
+╰──────────────────<𝟑
 
-╭─── 𓆩♡𓆪 𝐌𝐀𝐈𝐍 𝐂𝐌𝐃𝐙 𓆩♡𓆪 ───╮
-│ ✧ .menu   ➜ Command List
-│ ✧ .system ➜ System Info  
-│ ✧ .ping   ➜ Bot Speed
-│ ✧ .alive  ➜ Check Alive
-│ ✧ .owner  ➜ Owner Info
-╰────────────────────────╯
-
-╭─── 𓆩♡𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃 𓆩♡𓆪 ───╮
-│ ✧ .song  ➜ Download Song
-│ ✧ .video ➜ Download Video
-│ ✧ .fb    ➜ FB Video DL
-│ ✧ .tt    ➜ TikTok DL
-╰────────────────────────╯
-
-╭─── 𓆩♡𓆪 𝐓𝐎𝐋𝐒 𓆩♡𓆪 ───╮
-│ ✧ .vv       ➜ ViewOnce Open
-│ ✧ .sticker  ➜ Image to Sticker
-│ ✧ .fancy    ➜ Fancy Text
-│ ✧ .getdp    ➜ Get Profile Pic
-│ ✧ .npm      ➜ Search NPM
-│ ✧ .img      ➜ Search Images
-│ ✧ .mode     ➜ Change Bot Mode
-╰────────────────────────╯
-
-╭─── 𓆩♡𓆪 𝐆𝐑𝐎𝐔𝐏 𓆩♡𓆪 ───╮
-│ ✧ .tagall    ➜ Tag Everyone
-│ ✧ .hidetag   ➜ Silent Tag
-│ ✧ .add       ➜ Add Member
-│ ✧ .kick      ➜ Kick Member
-│ ✧ .tagadmin  ➜ Tag Admins
-│ ✧ .promote   ➜ Make Admin
-│ ✧ .demote    ➜ Remove Admin
-│ ✧ .lockgroup ➜ Lock Group
-│ ✧ .unlockgroup ➜ Unlock
-│ ✧ .mute      ➜ Mute Group
-│ ✧ .unmute    ➜ Unmute
-│ ✧ .setname   ➜ Set Name
-│ ✧ .setdesc   ➜ Set Desc
-│ ✧ .seticon   ➜ Set Icon
-│ ✧ .linkgroup ➜ Group Link
-│ ✧ .revokelink➜ Reset Link
-│ ✧ .leave     ➜ Leave Group
-╰────────────────────────╯
-
-╭─── 𓆩♡𓆪 𝐀𝐈 & 𝐅𝐔𝐍 𓆩♡𓆪 ───╮
-│ ✧ .akira ➜ Talk to Akira AI
-│ ✧ .lvcal ➜ Love Calculator
-│ ✧ .hentai➜ Hentai Video 18+
-│ ✧ .hack  ➜ Fake Hack Prank
-╰────────────────────────╯
-
-> ♡ 𝗔𝗲𝘀𝘁𝗵𝗮𝘁𝗶𝗰 𝗤𝘂𝗲𝗻 𝗕𝘆 𝗖𝗵𝗮𝗺𝗼𝗱 ♡
+> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*`,
         contextInfo: arabianCtx()
       }, { quoted: msg });
         }
     }
 };
+
