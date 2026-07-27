@@ -36,13 +36,18 @@ const AUTO_VOICE_REPLIES = [
     {
         keywords: ['good morning', 'gm'],
         url: 'https://files.catbox.moe/2o6k2l.ogg',
-        text: 'Good morning! ☀️'
+        text: '🦋🪷'
     },
     {
         keywords: ['mokada karanne', 'mk'],
         url: 'https://files.catbox.moe/zhfoxx.ogg',
-        text: 'Meh gena kiyanna ba 😄'
-    }
+        text: 'Mn'
+    },
+    {
+        keywords: ['පොන්නයා'],
+        url: '',
+        text: '*පොන්නයා හුත්තෝ තොපේ සීයා 🥲*'
+    {
 ];
 
 // Build a matcher once: exact-word match (not "substring anywhere"),
