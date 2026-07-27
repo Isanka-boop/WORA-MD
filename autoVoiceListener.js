@@ -27,11 +27,11 @@
 const AUTO_VOICE_REPLIES = [
     {
         keywords: ['good morning', 'gm'],
-        url: 'https://files.catbox.moe/2o6k2l.ogg , Gm'
+        url: 'https://files.catbox.moe/2o6k2l.ogg'
     },   
     {
         keywords: ['mokada karanne', 'mk'],
-        url: 'https://files.catbox.moe/zhfoxx.ogg , Mn'
+        url: 'https://files.catbox.moe/zhfoxx.ogg'
     }
 ];
 
