@@ -27,14 +27,25 @@ module.exports = {
             global.songCache = global.songCache || {};
 
 
-            // Button Click Download
-            if (body === "download_mp3") {
+            // Button Response Handler
+            const buttonId =
+                msg.message?.buttonsResponseMessage?.selectedButtonId ||
+                msg.message?.templateButtonReplyMessage?.selectedId ||
+                body;
+
+
+
+            // Download Button Click
+            if (buttonId === "download_mp3") {
+
 
                 const song = global.songCache[sender];
+
 
                 if (!song) {
                     return reply("❌ Song expired. Please search again!");
                 }
+
 
 
                 try {
@@ -52,7 +63,9 @@ module.exports = {
                 `https://whiteshadow-x-api.onrender.com/api/download/ytmp3?url=${encodeURIComponent(song.url)}&quality=320&apitoken=aWK0z4`;
 
 
+
                 const response = await axios.get(apiUrl);
+
 
 
                 const downloadUrl =
@@ -102,13 +115,18 @@ module.exports = {
 
 
 
-            // Song Search
+
+
+            // Search Song
+
             const query = args.join(" ");
+
 
 
             if (!query) {
                 return reply("🎵 *Please send a song name!*");
             }
+
 
 
 
@@ -123,14 +141,19 @@ module.exports = {
 
 
 
+
+
             const search = await yts(query);
 
+
             const video = search.videos[0];
+
 
 
             if (!video) {
                 return reply("❌ *Song not found!*");
             }
+
 
 
 
@@ -146,6 +169,8 @@ module.exports = {
 
 
 
+
+
             const date = moment()
                 .tz("Asia/Colombo")
                 .format("YYYY-MM-DD");
@@ -154,6 +179,8 @@ module.exports = {
             const time = moment()
                 .tz("Asia/Colombo")
                 .format("HH:mm:ss");
+
+
 
 
 
@@ -178,6 +205,11 @@ module.exports = {
 
 
 
+
+
+
+            // Send Thumbnail
+
             await socket.sendMessage(sender,{
 
                 image:{
@@ -186,8 +218,25 @@ module.exports = {
 
                 caption:caption,
 
-                footer:"🎀 Akira Music Downloader",
+                contextInfo:arabianCtx()
 
+            },{
+                quoted:msg
+            });
+
+
+
+
+
+
+
+            // Send Button Separately
+
+            await socket.sendMessage(sender,{
+
+                text:"🎵 Download your song below",
+
+                footer:"🎀 Akira Music Downloader",
 
                 buttons:[
 
@@ -203,15 +252,14 @@ module.exports = {
 
                 ],
 
-
-                headerType:4,
+                headerType:1,
 
                 contextInfo:arabianCtx()
-
 
             },{
                 quoted:msg
             });
+
 
 
 
