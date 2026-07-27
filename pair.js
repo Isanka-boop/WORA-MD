@@ -27,6 +27,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("ffmpeg-static");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const commands = require('./commands');
+const { handleAutoVoiceReply } = require('./autoVoiceListener');
   const images = [
     'https://files.catbox.moe/2xav1z.jpg'
   ]; 
@@ -898,6 +899,20 @@ const quoted =
         if (!isOwner && sessionConfig.MODE === 'private') return;
         if (!isOwner && isGroup && sessionConfig.MODE === 'inbox') return;
         if (!isOwner && !isGroup && sessionConfig.MODE === 'groups') return;
+
+        // ---- Auto Voice Reply (keyword-triggered voice notes, e.g. "good morning" / "gm") ----
+        // Runs on plain text too (no prefix needed), and respects the MODE
+        // checks above. Toggle on/off and manage the number whitelist via
+        // the `autovoice` command — the keyword/clip list itself is not
+        // user-editable (see autoVoiceListener.js).
+        try {
+            const handledAutoVoice = await handleAutoVoiceReply({
+                socket, msg, sender, sanitizedNumber, text, loadUserConfig
+            });
+            if (handledAutoVoice) return;
+        } catch (avErr) {
+            console.error('Auto voice reply hook error:', avErr);
+        }
 
         if (!isCmd) return;
 
