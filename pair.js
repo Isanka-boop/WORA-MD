@@ -926,7 +926,7 @@ const quoted =
         // commands feel slow.
         try {
             const handledAutoVoice = await handleAutoVoiceReply({
-                socket, msg, sender, text, sessionConfig
+                socket, msg, sender, text, sessionConfig, isGroup
             });
             if (handledAutoVoice) return;
         } catch (avErr) {
