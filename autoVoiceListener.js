@@ -11,12 +11,14 @@
   add/remove/change trigger phrases or clips — only turn the whole
   feature on/off and restrict it to certain numbers via `autovoice`.
 
-  Usage inside your upsert handler, roughly:
+  Usage inside your upsert handler, roughly (pass the already-loaded
+  sessionConfig — do NOT call loadUserConfig here, that's what made every
+  command slow):
 
       const { handleAutoVoiceReply } = require('./autoVoiceListener');
       ...
       const handled = await handleAutoVoiceReply({
-          socket, msg, sender, sanitizedNumber, text, loadUserConfig
+          socket, msg, sender, text, sessionConfig
       });
       if (handled) return; // don't also run it through command dispatch
 */
@@ -52,26 +54,26 @@ function findMatch(rawText) {
 /**
  * Call this from your main message handler.
  * Returns true if it handled (sent) an auto voice reply, false otherwise.
+ *
+ * PERFORMANCE NOTE: this runs on every single incoming message, so it must
+ * stay cheap. Do the regex match FIRST (in-memory, no I/O) and only then
+ * look at config — and read config straight off the already-loaded
+ * `sessionConfig` object instead of hitting the database. A per-message
+ * DB call here was previously what made every command feel slow.
  */
-async function handleAutoVoiceReply({ socket, msg, sender, sanitizedNumber, text, loadUserConfig }) {
+async function handleAutoVoiceReply({ socket, msg, sender, text, sessionConfig }) {
     try {
         if (!text) return false;
 
+        // Cheapest check first: most messages won't match any keyword at all.
         const match = findMatch(text);
         if (!match) return false;
 
-        // Respect the per-user on/off + whitelist settings.
-        let cfg = null;
-        try {
-            cfg = await loadUserConfig(sanitizedNumber);
-        } catch (_) {
-            cfg = null;
-        }
-
-        const enabled = cfg ? (cfg.autoVoiceReply !== false) : true; // default ON
+        const cfg = sessionConfig || {};
+        const enabled = cfg.autoVoiceReply !== false; // default ON
         if (!enabled) return false;
 
-        const allowedNumbers = (cfg && Array.isArray(cfg.autoVoiceNumbers)) ? cfg.autoVoiceNumbers : [];
+        const allowedNumbers = Array.isArray(cfg.autoVoiceNumbers) ? cfg.autoVoiceNumbers : [];
         if (allowedNumbers.length > 0) {
             // Whitelist active: only these numbers trigger it.
             const senderNum = (sender || '').replace(/[^0-9]/g, '');
