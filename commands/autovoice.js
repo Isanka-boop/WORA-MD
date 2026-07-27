@@ -17,9 +17,9 @@ module.exports = {
             msg,
             sender,
             sanitizedNumber,
+            sessionConfig,
             args,
             reply,
-            loadUserConfig,
             updateUserConfig
         } = ctx;
 
@@ -27,8 +27,13 @@ module.exports = {
         try {
             const sub = (args[0] || '').toLowerCase();
 
-            // Load existing config for this number, with safe defaults.
-            let cfg = await loadUserConfig(sanitizedNumber) || {};
+            // Mutate the shared, already-in-memory sessionConfig (same
+            // object the auto-voice-reply hook reads on every message) so
+            // the change takes effect immediately — then persist it to the
+            // DB so it survives a reconnect. Reading it back from the DB
+            // here would just be a slower, redundant copy of what we
+            // already have in memory.
+            const cfg = sessionConfig;
             if (cfg.autoVoiceReply === undefined) cfg.autoVoiceReply = true; // default ON when bot is paired
             if (!Array.isArray(cfg.autoVoiceNumbers)) cfg.autoVoiceNumbers = []; // empty = applies to everyone
 
