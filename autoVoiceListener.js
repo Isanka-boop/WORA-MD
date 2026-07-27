@@ -36,18 +36,13 @@ const AUTO_VOICE_REPLIES = [
     {
         keywords: ['good morning', 'gm'],
         url: 'https://files.catbox.moe/2o6k2l.ogg',
-        text: '*සුබ උදෑසනක්..*'
+        text: 'Good morning! ☀️'
     },
     {
         keywords: ['mokada karanne', 'mk'],
         url: 'https://files.catbox.moe/zhfoxx.ogg',
-        text: 'Mn'
-    },
-    {
-        keywords: ['Ponnaya'],
-        url: '',
-        text: '*පොන්නයා හුත්තෝ තොපේ සීයා 🥲*'
-    {
+        text: 'Meh gena kiyanna ba 😄'
+    }
 ];
 
 // Build a matcher once: exact-word match (not "substring anywhere"),
@@ -125,3 +120,4 @@ async function handleAutoVoiceReply({ socket, msg, sender, text, sessionConfig, 
 }
 
 module.exports = { handleAutoVoiceReply, AUTO_VOICE_REPLIES };
+
