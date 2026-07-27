@@ -1,137 +1,229 @@
 /*
   Command: song, ytmp3
-  Auto-extracted from the original pair.js command switch.
 */
+
 module.exports = {
     name: 'song',
     aliases: ['ytmp3'],
+
     execute: async (ctx) => {
+
         const {
             socket,
-            number,
-            sanitizedNumber,
-            sessionConfig,
-            recentCallers,
-            msg,
-            type,
-            quoted,
-            body,
-            text,
-            isCmd,
             sender,
-            nowsender,
-            senderNumber,
-            developers,
-            botNumber,
-            isbot,
-            isOwner,
-            isAshuu,
-            isGroup,
-            parts,
-            command,
+            msg,
             args,
-            match,
-            groupMetadata,
-            participants,
-            groupAdmins,
-            isBotAdmins,
-            isAdmins,
+            body,
             reply,
-            getUptime,
-            ARABIAN_THUMB_G,
-            arabianCtxGlobal,
-            ARABIAN_TITLE,
-            ARABIAN_SUB,
-            arabianCtx,
-            downloadQuotedMedia,
-            sendReply,
-            replyFq,
-            config,
-            akira,
-            formatMessage,
-            fetchJson,
-            runtime,
-            resize,
-            capital,
-            createSerial,
-            deleteSession,
-            loadUserConfig,
-            updateUserConfig,
-            uploadToCatbox,
-            saveMediaToCatbox,
-            saveSession,
-            restoreSession,
-            destroySocket,
-            Session,
-            mongoose,
-            axios,
             yts,
-            ytmp3,
-            ytmp4,
-            Jimp,
+            axios,
             moment,
-            os,
-            fecth,
-            ffmpeg,
-            crypto,
-            path,
-            fs,
-            exec,
-            activeSockets,
-            socketCreationTime,
-            loadAdmins,
-            getSriLankaTimestamp,
-            images,
-            EmpirePair
+            arabianCtx
         } = ctx;
 
-        { // command body (own scope, so locals can shadow ctx names)
-try {
-        const query = args.join(' ');
-        if (!query) return reply("🎵 *Plz Send Me A Song Name !*");
 
-        try { await socket.sendMessage(sender, { react: { text: '🔎', key: msg.key } }); } catch (_) {}
+        try {
 
-        const search = await yts(query);
-        const video = search.videos[0]; 
+            global.songCache = global.songCache || {};
 
-        if (!video) return reply("❌ *I Cant Find It !*");
 
-        const slDate = moment().tz('Asia/Colombo').format('YYYY-MM-DD');
-        const slTimeNow = moment().tz('Asia/Colombo').format('HH:mm:ss');
+            // Button Click Download
+            if (body === "download_mp3") {
 
-        const caption = `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗩𝗶𝗱𝗲𝗼 🎀] ¡! ❞*\n\n` +
-                        `> *\`🎵 𝚃𝙸𝚃𝙻𝙴 :\`* ${video.title}\n` +
-                        `> *\`👤 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 :\`* ${video.author.name}\n` +
-                        `> *\`⏱️ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 :\`* ${video.timestamp}\n` +
-                        `> *\`👀 𝚅𝙸𝙴𝚆𝚂 :\`* ${video.views.toLocaleString()}\n` +
-                        `> *\`📅 𝙳𝙰𝚃𝙴 :\`* ${slDate}\n` +
-                        `> *\`⌚ 𝚃𝙸𝙼𝙴 :\`* ${slTimeNow}\n\n` +
-                        `> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*`;
+                const song = global.songCache[sender];
 
-        await socket.sendMessage(sender, {
-            image: { url: video.thumbnail },
-            caption: caption,
-            contextInfo: arabianCtx()
-        }, { quoted: msg });
+                if (!song) {
+                    return reply("❌ Song expired. Please search again!");
+                }
 
-        const ytRes = await axios.get(`https://ytdl-new-dxz.vercel.app/api/ytmp3?url=${encodeURIComponent(video.url)}`);
-        const downloadUrl = ytRes.data.download_url || ytRes.data.result || ytRes.data.url;
 
-        if (!downloadUrl) return reply("❌ *I cant get MP3 !*");
+                try {
+                    await socket.sendMessage(sender,{
+                        react:{
+                            text:"⬇️",
+                            key:msg.key
+                        }
+                    });
+                } catch (_) {}
 
-        await socket.sendMessage(sender, {
-            audio: { url: downloadUrl },
-            mimetype: 'audio/mpeg',
-            ptt: false
-        }, { quoted: msg });
 
-        try { await socket.sendMessage(sender, { react: { text: '✅', key: msg.key } }); } catch (_) {}
 
-    } catch (e) {
-        console.log("SONG CMD ERROR:", e);
-        reply("❌ *Error: " + e.message + "*");
-    }
+                const apiUrl =
+                `https://whiteshadow-x-api.onrender.com/api/download/ytmp3?url=${encodeURIComponent(song.url)}&quality=320&apitoken=aWK0z4`;
+
+
+                const response = await axios.get(apiUrl);
+
+
+                const downloadUrl =
+                    response.data.result?.download ||
+                    response.data.result?.url ||
+                    response.data.download ||
+                    response.data.download_url ||
+                    response.data.url;
+
+
+
+                if (!downloadUrl) {
+                    return reply("❌ MP3 download link not found!");
+                }
+
+
+
+                await socket.sendMessage(sender,{
+
+                    audio:{
+                        url:downloadUrl
+                    },
+
+                    mimetype:"audio/mpeg",
+
+                    fileName:`${song.title}.mp3`,
+
+                    ptt:false
+
+                },{
+                    quoted:msg
+                });
+
+
+
+                try {
+                    await socket.sendMessage(sender,{
+                        react:{
+                            text:"✅",
+                            key:msg.key
+                        }
+                    });
+                } catch (_) {}
+
+                return;
+            }
+
+
+
+            // Song Search
+            const query = args.join(" ");
+
+
+            if (!query) {
+                return reply("🎵 *Please send a song name!*");
+            }
+
+
+
+            try {
+                await socket.sendMessage(sender,{
+                    react:{
+                        text:"🔎",
+                        key:msg.key
+                    }
+                });
+            } catch (_) {}
+
+
+
+            const search = await yts(query);
+
+            const video = search.videos[0];
+
+
+            if (!video) {
+                return reply("❌ *Song not found!*");
+            }
+
+
+
+            global.songCache[sender] = {
+
+                url: video.url,
+
+                title: video.title,
+
+                created: Date.now()
+
+            };
+
+
+
+            const date = moment()
+                .tz("Asia/Colombo")
+                .format("YYYY-MM-DD");
+
+
+            const time = moment()
+                .tz("Asia/Colombo")
+                .format("HH:mm:ss");
+
+
+
+            const caption =
+`*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗠𝘂𝘀𝗶𝗰 🎀] ❞*
+
+> 🎵 *Title:* ${video.title}
+
+> 👤 *Channel:* ${video.author.name}
+
+> ⏱ *Duration:* ${video.timestamp}
+
+> 👀 *Views:* ${video.views.toLocaleString()}
+
+> 📅 *Date:* ${date}
+
+> ⌚ *Time:* ${time}
+
+
+> ✨ Powered By Akira Girl Bot`;
+
+
+
+
+            await socket.sendMessage(sender,{
+
+                image:{
+                    url:video.thumbnail
+                },
+
+                caption:caption,
+
+                footer:"🎀 Akira Music Downloader",
+
+
+                buttons:[
+
+                    {
+                        buttonId:"download_mp3",
+
+                        buttonText:{
+                            displayText:"🎵 Download MP3"
+                        },
+
+                        type:1
+                    }
+
+                ],
+
+
+                headerType:4,
+
+                contextInfo:arabianCtx()
+
+
+            },{
+                quoted:msg
+            });
+
+
+
+        } catch(e) {
+
+            console.log("SONG ERROR:", e);
+
+            reply(
+                "❌ Song command error:\n" +
+                e.message
+            );
         }
+
     }
 };
