@@ -395,19 +395,13 @@ const runtime = (seconds) => {
 	return dDisplay + hDisplay + mDisplay + sDisplay;
 }
 
-async function setupMessageHandlers(socket) {
-    socket.ev.on('messages.upsert', async ({ messages }) => {
-        const msg = messages[0];
-        if (!msg.message || msg.key.remoteJid === 'status@broadcast' || msg.key.remoteJid === config.NEWSLETTER_JID) return;
-               
-        const senderNumber = msg.key.participant ? msg.key.participant.split('@')[0] : msg.key.remoteJid.split('@')[0];
-        const botNumber = jidNormalizedUser(socket.user.id).split('@')[0];
-        const isReact = msg.message.reactionMessage;
-
-        const sanitizedNumber = botNumber.replace(/[^0-9]/g, '');
-        const sessionConfig = activeSockets.get(sanitizedNumber)?.config || config;
-    });
-} 
+// PERF: setupMessageHandlers used to register a second messages.upsert
+// listener here that computed a bunch of values (sender number, bot
+// number, sanitized number, session config lookup) and then did nothing
+// with them — pure overhead on every single incoming message, on top of
+// the real handler in setupCommandHandlers. Removed; setupCommandHandlers
+// already covers everything this needs.
+async function setupMessageHandlers(socket) {}
 
 function setupAutoRestart(socket, number) {
     const id = number;
@@ -680,12 +674,32 @@ async function EmpirePair(number, res) {
     const { version } = await fetchLatestBaileysVersion();
 
     try {
+        const socketLogger = pino({ level: "silent" });
         const socket = makeWASocket({
             version,
-            auth: state,
-            logger: pino({ level: "silent" }),
+            // PERF: `state.keys` on its own hits the session-file store on
+            // disk for every single signal key lookup (every message
+            // decrypt AND every message we send does this). Wrapping it in
+            // makeCacheableSignalKeyStore keeps hot keys in memory, so
+            // decrypting an incoming command and encrypting our reply no
+            // longer means multiple disk round-trips each — this is the
+            // biggest single lever on "time from message sent to reply
+            // received". `makeCacheableSignalKeyStore` was already being
+            // imported above but never actually used.
+            auth: {
+                creds: state.creds,
+                keys: makeCacheableSignalKeyStore(state.keys, socketLogger),
+            },
+            logger: socketLogger,
             browser: ["Ubuntu", "Chrome", "20.0.04"],
             printQRInTerminal: false,
+            // PERF: skip re-fetching full history/dead sockets on every
+            // reconnect and don't sync the whole app-state on boot — we
+            // only care about live incoming messages, not backfilling
+            // chat history, so this shaves real seconds off startup and
+            // avoids extra background traffic competing with live replies.
+            syncFullHistory: false,
+            markOnlineOnConnect: false,
         });
 
         socketCreationTime.set(sanitizedNumber, Date.now());
