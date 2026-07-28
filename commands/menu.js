@@ -49,6 +49,7 @@ const menuText = `
 │ ✧.ping • Bot Speed
 │ ✧.alive • Check Alive
 │ ✧.owner • Owner Info
+│ ✧.wallpaper • Download beautiful wallpaper
 ╰─────────────────♡
 
 ╭─ 𓆩⬇️𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
