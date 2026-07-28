@@ -51,6 +51,7 @@ const menuText = `
 │ ✧.owner • Owner Info
 │ ✧.wallpaper • Download beautiful wallpaper
 │ ✧.nasa • Nasa Picture of the Day
+│ ✧.currency • Currency List
 ╰─────────────────♡
 
 ╭─ 𓆩⬇️𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
