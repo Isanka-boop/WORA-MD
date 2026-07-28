@@ -17,14 +17,13 @@ module.exports = {
         } = ctx;
 
         { // command body
-            // PERF: react is fire-and-forget so it can't block the reply.
             socket.sendMessage(sender, { react: { text: '🤖', key: msg.key } }).catch(() => {});
 
             const question = (text || '').trim();
 
             if (!question) {
                 return reply(
-                    '*↳ ❝ [🤖 Gemini AI 🤖] ¡! ❞*\n\n' +
+                    '*↳ ❝ [🤖 Gemini AI චැට්] ¡! ❞*\n\n' +
                     '*⊹₊⟡⋆ ⋮ භාවිතය ᶻ 𝗓 𐰁 .ᐟ*\n' +
                     '➜ *.gemini <ඔබේ ප්‍රශ්නය>*\n\n' +
                     '*⊹₊⟡⋆ ⋮ උදාහරණ ᶻ 𝗓 𐰁 .ᐟ*\n' +
@@ -35,10 +34,10 @@ module.exports = {
                 );
             }
 
-            // Processing message — AI response ලැබෙන්න time යනවා නිසා
+            // Processing message
             await socket.sendMessage(sender, {
                 text:
-                    '*↳ ❝ [🤖 Gemini AI ] ¡! ❞*\n\n' +
+                    '*↳ ❝ [🤖 Gemini AI 🤖] ¡! ❞*\n\n' +
                     '*⊹₊⟡⋆ ⋮ සිතමින් ᶻ 𝗓 𐰁 .ᐟ*\n' +
                     `➜ 💭 "${question}"\n\n` +
                     '➜ ⏳ කරුණාකර රැඳී සිටින්න...\n\n' +
@@ -48,7 +47,13 @@ module.exports = {
 
             try {
                 const apiToken = 'aWK0z4';
-                const endpoint = `https://whiteshadow-x-api.onrender.com/api/ai/gemini?apitoken=${apiToken}&q=${encodeURIComponent(question)}`;
+
+                const systemInstruction = `You are a helpful AI assistant. Answer ONLY the user's question directly and clearly. Do NOT mention your name, model name, "Gemini", ".gemini", command names, or any meta information about yourself. Just answer what is asked.`;
+
+                const cleanQuestion = question.replace(/^\.gemini\s*/i, '').trim();
+                const fullPrompt = `${systemInstruction}\n\nUser question: ${cleanQuestion}`;
+
+                const endpoint = `https://whiteshadow-x-api.onrender.com/api/ai/gemini?apitoken=${apiToken}&q=${encodeURIComponent(fullPrompt)}`;
 
                 const { data } = await axios.get(endpoint, { timeout: 60000 });
 
@@ -58,32 +63,32 @@ module.exports = {
 
                 const { model, response } = data.result;
 
-                // Markdown cleanup — WhatsApp ට ### headers, ** bold support නෑ
+                // Markdown cleanup
                 const cleanResponse = response
-                    .replace(/^#{1,6}\s+/gm, '')       // ### headers remove
-                    .replace(/\*\*(.*?)\*\*/g, '*$1*')  // **bold** → *bold* (WhatsApp bold)
-                    .replace(/__(.*?)__/g, '_$1_')      // __italic__ → _italic_
-                    .replace(/`{3}[\s\S]*?`{3}/g, (m) => m.replace(/`{3}\w*\n?/, '```\n').trimEnd()) // code blocks
+                    .replace(/^#{1,6}\s+/gm, '')
+                    .replace(/\*\*(.*?)\*\*/g, '*$1*')
+                    .replace(/__(.*?)__/g, '_$1_')
                     .trim();
 
-                // Response දිග limit — WhatsApp message limit 65536 chars
+                // Response දිග limit
                 const MAX_LEN = 3000;
                 const trimmedResponse = cleanResponse.length > MAX_LEN
                     ? cleanResponse.slice(0, MAX_LEN).trim() + '\n\n_... (දිගු නිසා කපා ඇත)_'
                     : cleanResponse;
 
-                const title = `*↳ ❝ [🤖 Gemini AI 🤖] ¡! ❞*`;
-                const content =
+                const text =
+                    `*↳ ❝ [🤖 Gemini AI 🤖] ¡! ❞*\n\n` +
                     `*⊹₊⟡⋆ ⋮ ඔබේ ප්‍රශ්නය ᶻ 𝗓 𐰁 .ᐟ*\n` +
-                    `➜ _${question}_\n\n` +
-                    `*⊹₊⟡⋆ ⋮ Gemini පිළිතුර ᶻ 𝗓 𐰁 .ᐟ*\n` +
+                    `➜ _${cleanQuestion}_\n\n` +
+                    `*⊹₊⟡⋆ ⋮ පිළිතුර ᶻ 𝗓 𐰁 .ᐟ*\n` +
                     `${trimmedResponse}\n\n` +
                     `*⊹₊⟡⋆ ⋮ Model ᶻ 𝗓 𐰁 .ᐟ*\n` +
-                    `➜ \`${model || 'gemini'}\`\n`;
-                const footer = '> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*';
+                    `➜ \`${model || 'gemini'}\`\n\n` +
+                    `> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*`;
 
+                // PERF: image නෑ — text only, instant delivery
                 await socket.sendMessage(sender, {
-                    text: `${title}\n\n${content}\n${footer}`,
+                    text,
                     contextInfo: arabianCtx()
                 }, { quoted: msg });
 
