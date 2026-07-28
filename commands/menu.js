@@ -61,6 +61,7 @@ const menuText = `
 │ ✧.tt • TikTok DL
 │ ✧.sinhalasub • sinhalasub download
 │ ✧.holidays • holidays send
+│ ✧.text2img • Img generation
 ╰─────────────────♡
 
 ╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
