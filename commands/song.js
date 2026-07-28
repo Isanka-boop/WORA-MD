@@ -102,6 +102,10 @@ module.exports = {
             if (!query) return reply("🎵 *Plz Send Me A Song Name !*");
 
             try { await socket.sendMessage(sender, { react: { text: '🔎', key: msg.key } }); } catch (_) {}
+            // Search + download can take a while — show the mic/"recording
+            // audio" presence bubble so it's visibly still working instead
+            // of looking dead.
+            socket.sendPresenceUpdate('recording', sender).catch(() => {});
 
             // ---- Search YouTube ----
             const search = await yts(query);
@@ -207,6 +211,8 @@ module.exports = {
         } catch (e) {
             console.log("SONG CMD ERROR:", e);
             reply("❌ *Error: " + e.message + "*");
+        } finally {
+            socket.sendPresenceUpdate('paused', sender).catch(() => {});
         }
         }
     }

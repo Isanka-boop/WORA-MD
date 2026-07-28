@@ -88,6 +88,9 @@ module.exports = {
         { // command body (own scope, so locals can shadow ctx names)
       // PERF: react is fire-and-forget (not awaited) so it can't block the reply.
       socket.sendMessage(sender, { react: { text: '🍫', key: msg.key } }).catch(() => {});
+      // Show "typing..." while the AI call is in flight — this can take a
+      // few seconds, and without this the chat just looks stuck.
+      socket.sendPresenceUpdate('composing', sender).catch(() => {});
     const { NiyoXClient } = require("niyox");
     const title = "🎀 *𝗔𝗸𝗶𝗿𝗮 𝗔𝗶 𝗚𝗶𝗿𝗹𝗳𝗿𝗲𝗻𝗱* 🎀";
     const footer = "> *𝐀𝐞𝐬𝐭𝐡𝐚𝐭𝐢𝐜 𝐐𝐮𝐞𝐞𝐧 𝐁𝐲 𝐂𝐡𝐚𝐦𝐨𝐝 🌺*";
@@ -123,6 +126,8 @@ module.exports = {
     } catch (err) {
         console.error("NiyoX Error:", err.message);
         await socket.sendMessage(sender, { text: "❌ I need cooldown time" }, { quoted: msg });
+    } finally {
+        socket.sendPresenceUpdate('paused', sender).catch(() => {});
     }
         }
     }

@@ -91,6 +91,10 @@ try {
         if (!text) return reply("🎥 *Send me a video name or yt link !*");
 
         try { await socket.sendMessage(sender, { react: { text: '🔍', key: msg.key } }); } catch (_) {}
+        // Search + API call + full video download below can take a good
+        // few seconds — show "typing..." the whole time so it's clear the
+        // bot is still working, not stuck.
+        socket.sendPresenceUpdate('composing', sender).catch(() => {});
  
         const search = await yts(text);
         const video = search.videos[0]; 
@@ -136,6 +140,8 @@ try {
         console.log("VIDEO CMD ERROR:", e);
         reply("❌ *ERROR try again later !*");
         try { await socket.sendMessage(sender, { react: { text: '❌', key: msg.key } }); } catch (_) {}
+    } finally {
+        socket.sendPresenceUpdate('paused', sender).catch(() => {});
     }
         }
     }
