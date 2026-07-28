@@ -37,7 +37,7 @@ module.exports = {
                 }
 
                 // Limit how many we send so we don't spam the chat / hit rate limits.
-                const MAX_SEND = 5;
+                const MAX_SEND = 2;
                 const items = data.results.slice(0, MAX_SEND);
 
                 for (const item of items) {
