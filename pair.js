@@ -305,12 +305,15 @@ async function autoReconnectOnStartup() {
             console.log(`Loaded ${numbers.length} numbers from numbers.json`);
         }
 
-        const sessions = await Session.find({}, 'number').lean();
-        const mongoNumbers = sessions.map(s => s.number);
+        // FIX 4: invalid/incomplete sessions startup reconnect එකේදී skip කරනවා
+        const sessions = await Session.find({}, 'number creds').lean();
+        const mongoNumbers = sessions
+            .filter(s => s.creds && s.creds.me && s.creds.me.id)
+            .map(s => s.number);
         numbers = [...new Set([...numbers, ...mongoNumbers])];
 
         if (numbers.length === 0) {
-            console.log('No numbers found for auto-reconnect');
+            console.log('No valid numbers found for auto-reconnect');
             return;
         }
 
@@ -332,7 +335,8 @@ async function autoReconnectOnStartup() {
                 console.error(`❌ Failed to reconnect ${sanitized}:`, error);
             }
 
-            await delay(1500);
+            // FIX 4: delay වැඩි කළා — too-fast reconnects WhatsApp spam detection trigger කරනවා
+            await delay(3000);
         }
     } catch (error) {
         console.error('Auto-reconnect on startup failed:', error);
@@ -418,27 +422,35 @@ function setupAutoRestart(socket, number) {
         reconnecting = true;
 
         const statusCode = lastDisconnect?.error?.output?.statusCode;
-        console.warn(`[${id}] Connection closed | code:`, statusCode);
+        const errorMessage = lastDisconnect?.error?.message || '';
+        console.warn(`[${id}] Connection closed | code: ${statusCode} | msg: ${errorMessage}`);
 
-        if (statusCode === 401) {
+        // FIX 2: permanent disconnect codes — reconnect loop නොකරන්න
+        // 401 = logged out, 403 = banned/restricted, 408 = conflict, 440 = replaced
+        const PERMANENT_CODES = [401, 403, 408, 440];
+        if (PERMANENT_CODES.includes(statusCode)) {
+            console.warn(`[${id}] ⚠️ Permanent disconnect (code ${statusCode}) — deleting session, will NOT reconnect`);
             await destroySocket(id);
             await deleteSession(id);
+            reconnecting = false;
             return;
         }
 
-        await delay(2000);
+        // Temporary disconnect — reconnect කරනවා
+        console.log(`[${id}] 🔄 Temporary disconnect — reconnecting in 3s...`);
+        await delay(3000);
         await destroySocket(id);
 
         const mockRes = {
             headersSent: true,
             send() {},
-            status() { return this }
+            status() { return this; }
         };
 
         try {
             await EmpirePair(id, mockRes);
         } catch (e) {
-            console.error('Reconnect failed:', e);
+            console.error(`[${id}] Reconnect failed:`, e);
         }
 
         reconnecting = false;
@@ -464,6 +476,12 @@ async function destroySocket(id) {
 async function saveSession(number, creds) {
     const sanitizedNumber = number.replace(/[^0-9]/g, '');
     try {
+        // FIX 1: validate creds before saving — partial creds නිසා session corrupt වෙන එක prevent කරනවා
+        if (!creds || !creds.me || !creds.me.id) {
+            console.warn(`[saveSession] Skipping save for ${sanitizedNumber} — creds not fully registered yet`);
+            return;
+        }
+
         const sessionPath = path.join(SESSION_BASE_PATH, `session_${sanitizedNumber}`);
         await Promise.all([
             Session.findOneAndUpdate({
@@ -480,9 +498,9 @@ async function saveSession(number, creds) {
             })(),
             addNumberIfMissing(sanitizedNumber)
         ]);
-        console.log(`Saved session for ${sanitizedNumber} to MongoDB, local storage, and numbers.json`);
+        console.log(`[saveSession] ✅ Saved session for ${sanitizedNumber} to MongoDB, local storage, and numbers.json`);
     } catch (error) {
-        console.error(`Failed to save session for ${sanitizedNumber}:`, error);
+        console.error(`[saveSession] ❌ Failed for ${sanitizedNumber}:`, error);
     }
 }
 
@@ -833,11 +851,15 @@ async function EmpirePair(number, res) {
 
             if (connection === 'close') {
                 const statusCode = lastDisconnect?.error?.output?.statusCode;
-                if (statusCode === 401) {
-                    try { socket.end(); } catch {}
+                console.warn(`[EmpirePair][${sanitizedNumber}] Close | code: ${statusCode}`);
+
+                // FIX 3: permanent codes — setupAutoRestart() handles delete/cleanup,
+                // මෙතන duplicate destroySocket/delete call නොකරන්නෙ race condition prevent කරන්න.
+                // Memory map clear කරනවා පමණයි.
+                const PERMANENT_CODES = [401, 403, 408, 440];
+                if (PERMANENT_CODES.includes(statusCode)) {
                     activeSockets.delete(sanitizedNumber);
                     socketCreationTime.delete(sanitizedNumber);
-                    await deleteSession(sanitizedNumber);
                 }
             }
         });
