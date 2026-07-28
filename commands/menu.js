@@ -91,6 +91,7 @@ const menuText = `
 │ ✧.lvcal • Love Calculator
 │ ✧.hentai• 18+ Content
 │ ✧.hack • Fake Hack
+│ ✧.truthordare • Playing game
 ╰─────────────────♡
 
 ━━━━━━━━━━━━━━━
