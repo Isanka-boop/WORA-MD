@@ -2,6 +2,11 @@
   Command: sinhalasub
   Auto-extracted from the original pair.js command switch.
 */
+
+// FIX: this was missing — sinhalaSub() was being called without being imported,
+// which caused "ReferenceError: sinhalaSub is not defined"
+const { sinhalaSub } = require('../lib/sinhalasub');
+
 module.exports = {
     name: 'sinhalasub',
     aliases: ['movie'],
@@ -93,8 +98,6 @@ module.exports = {
           return await reply("*Please provide a search query! (e.g., Deadpool)*");
         }
 
-        // NOTE: sinhalaSub() must be required at the top of your commands loader
-        // e.g. const { sinhalaSub } = require('../lib/sinhalasub');
         const sinhalasubInstance = await sinhalaSub();
         const searchResults = await sinhalasubInstance.search(q);
         const limitedResults = searchResults.result.slice(0, 10);
