@@ -63,7 +63,7 @@ const menuText = `
 │ ✧.sinhalasub • sinhalasub download
 │ ✧.holidays • holidays send
 │ ✧.text2img • Img generation
-│ ✧.fakeff • ff lobby create
+│ ✧.short • Link Short
 ╰─────────────────♡
 
 ╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
