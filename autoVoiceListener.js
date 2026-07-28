@@ -45,8 +45,8 @@ const AUTO_VOICE_REPLIES = [
     },
     {
         keywords: ['හායි' , 'Hy'],
-        url: 'https://github.com/mrdinesh595/Mssadu/raw/refs/heads/main/database/hi.mp3',
-        text: ''
+        url: '',
+        text: '`*Hy hy 🦋*`'
     }
 ];
 
