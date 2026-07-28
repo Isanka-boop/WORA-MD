@@ -17,7 +17,6 @@ module.exports = {
         } = ctx;
 
         { // command body
-            // PERF: react is fire-and-forget so it can't block the reply.
             socket.sendMessage(sender, { react: { text: '📅', key: msg.key } }).catch(() => {});
 
             try {
@@ -27,33 +26,49 @@ module.exports = {
                 const { data } = await axios.get(endpoint, { timeout: 15000 });
 
                 if (!data || data.success !== true || !Array.isArray(data.results) || data.results.length === 0) {
-                    return reply('*🍓 No public holidays found.*');
+                    return reply('*🍓 රජයේ නිවාඩු දිනයන් සොයාගත නොහැකි විය.*');
                 }
 
-                // Only show "Public" type holidays to keep the list clean and relevant.
                 const publicHolidays = data.results.filter(h =>
                     Array.isArray(h.types) && h.types.includes('Public')
                 );
 
                 const list = publicHolidays.length ? publicHolidays : data.results;
-
-                // Limit how many entries we list so the message doesn't get too long.
                 const MAX_ITEMS = 20;
                 const items = list.slice(0, MAX_ITEMS);
 
                 const countryCode = items[0]?.countryCode || 'N/A';
 
+                // සිංහල මාස නාම
+                const sinhalaMonths = [
+                    'ජනවාරි', 'පෙබරවාරි', 'මාර්තු', 'අප්‍රේල්',
+                    'මැයි', 'ජූනි', 'ජූලි', 'අගෝස්තු',
+                    'සැප්තැම්බර්', 'ඔක්තෝබර්', 'නොවැම්බර්', 'දෙසැම්බර්'
+                ];
+
+                // සිංහල සතිය නාම
+                const sinhalaDays = [
+                    'ඉරිදා', 'සදුදා', 'අඟහරුවාදා', 'බදාදා',
+                    'බ්‍රහස්පතින්දා', 'සිකුරාදා', 'සෙනසුරාදා'
+                ];
+
+                const formatSinhalaDate = (dateStr) => {
+                    const d = new Date(dateStr);
+                    if (isNaN(d)) return dateStr;
+                    const day = sinhalaDays[d.getUTCDay()];
+                    const month = sinhalaMonths[d.getUTCMonth()];
+                    const date = d.getUTCDate();
+                    const year = d.getUTCFullYear();
+                    return `${day}, ${month} ${date}, ${year}`;
+                };
+
                 let body = '';
                 for (const h of items) {
-                    const formattedDate = moment(h.date).isValid()
-                        ? moment(h.date).format('MMM D, YYYY (ddd)')
-                        : h.date;
-
                     body += `*⊹₊⟡⋆ ⋮ ${h.localName}*\n` +
-                            `➜ 📆 ${formattedDate}\n\n`;
+                            `➜ 📆 ${formatSinhalaDate(h.date)}\n\n`;
                 }
 
-                const title = `*↳ ❝ [📅 𝗣𝘂𝗯𝗹𝗶𝗰 𝗛𝗼𝗹𝗶𝗱𝗮𝘆𝘀 (${countryCode}) 📅] ¡! ❞*`;
+                const title = `*↳ ❝ [📅 රජයේ නිවාඩු දිනයන් (${countryCode}) 📅] ¡! ❞*`;
                 const footer = '> *𝗔esthatic 𝗤ueen 𝗕y 𝗖hamod 𝜗𝜚⋆*';
 
                 await socket.sendMessage(sender, {
@@ -63,7 +78,7 @@ module.exports = {
 
             } catch (err) {
                 console.error('[holidays] error:', err?.message || err);
-                await reply('*🍓 Failed to fetch public holidays. Try again later.*');
+                await reply('*🍓 රජයේ නිවාඩු දිනයන් ලබාගැනීමට අසමත් විය. කරුණාකර නැවත උත්සාහ කරන්න.*');
             }
         }
     }
