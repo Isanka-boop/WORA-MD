@@ -59,6 +59,7 @@ const menuText = `
 │ ✧.fb • Facebook DL
 │ ✧.tt • TikTok DL
 │ ✧.sinhalasub • sinhalasub download
+│ ✧.holidays • holidays send
 ╰─────────────────♡
 
 ╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
