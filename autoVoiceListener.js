@@ -42,6 +42,11 @@ const AUTO_VOICE_REPLIES = [
         keywords: ['mokada karanne', 'mk'],
         url: 'https://files.catbox.moe/zhfoxx.ogg',
         text: '*Mn ❗*'
+    },
+    {
+        keywords: ['හායි' , 'Hy'],
+        url: 'https://github.com/mrdinesh595/Mssadu/raw/refs/heads/main/database/hi.mp3',
+        text: ''
     }
 ];
 
