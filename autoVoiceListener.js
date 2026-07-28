@@ -46,7 +46,7 @@ const AUTO_VOICE_REPLIES = [
     {
         keywords: ['හායි' , 'Hy'],
         url: '',
-        text: '`*Hy hy 🦋*`'
+        text: '*Hi 🦋*'
     }
 ];
 
