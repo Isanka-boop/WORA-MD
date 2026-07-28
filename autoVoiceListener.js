@@ -49,7 +49,7 @@ const AUTO_VOICE_REPLIES = [
         text: '*Hi 🦋*'
     },
     {
-        keywords: ['ponnaya' , 'පොන්නයා'],
+        keywords: ['ponnaya'],
         url: '',
         text: '*කවුද හුත්තෝ පොන්නයා තොපේ සියානෙ පොන්නයා 🤬*'
     }   
