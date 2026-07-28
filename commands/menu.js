@@ -50,6 +50,7 @@ const menuText = `
 │ ✧.alive • Check Alive
 │ ✧.owner • Owner Info
 │ ✧.wallpaper • Download beautiful wallpaper
+│ ✧.nasa • Nasa Picture of the Day
 ╰─────────────────♡
 
 ╭─ 𓆩⬇️𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
