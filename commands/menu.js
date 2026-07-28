@@ -67,6 +67,7 @@ const menuText = `
 │ ✧.img • Image Search
 │ ✧.mode • Bot Mode
 │ ✧.welcome • Welcome Msg
+│ ✧.tts • Text to speech
 ╰─────────────────♡
 
 ╭─ 𓆩👥𓆪 𝐆𝐑𝐎𝐔𝐏 𝐂𝐌𝐃𝐙
@@ -91,7 +92,7 @@ ${dailyAbout}
 ━━━━━━━━━━━━━━━
 
 🌸 𝑻𝒉𝒂𝒏𝒌 𝒀𝒐𝒖 𝒇𝒐𝒓 𝑼𝒔𝒊𝒏𝒈 𝑨𝒌𝒊𝒓𝒂 🌸
-👑 𝑫𝒆𝒗 : 𝐂𝐡𝐚𝐦𝐨𝐝 | 💖 𝑴𝒂𝒅𝒆 𝒘𝒊𝒕𝒉 𝑳𝒐𝒗𝒆
+👑 𝑫𝒆𝒗 : 𝐂𝐡𝐚𝐦𝐨𝐝 | 🫶🤍 𝑴𝒂𝒅𝒆 𝒘𝒊𝒕𝒉 𝑳𝒐𝒗𝒆
 `;
 
 await socket.sendMessage(sender, {
