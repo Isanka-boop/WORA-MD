@@ -36,12 +36,12 @@ const AUTO_VOICE_REPLIES = [
     {
         keywords: ['good morning', 'gm'],
         url: 'https://files.catbox.moe/2o6k2l.ogg',
-        text: 'Good morning! ☀️'
+        text: '*සුබ උදෑසනක් 🥲*'
     },
     {
         keywords: ['mokada karanne', 'mk'],
         url: 'https://files.catbox.moe/zhfoxx.ogg',
-        text: 'Meh gena kiyanna ba 😄'
+        text: '*Mn ❗*'
     }
 ];
 
