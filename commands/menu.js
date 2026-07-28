@@ -56,6 +56,7 @@ const menuText = `
 │ ✧.video • Download Video
 │ ✧.fb • Facebook DL
 │ ✧.tt • TikTok DL
+│ ✧.sinhalasub • sinhalasub download
 ╰─────────────────♡
 
 ╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
