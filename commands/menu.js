@@ -69,6 +69,7 @@ const menuText = `
 │ ✧.mode • Bot Mode
 │ ✧.welcome • Welcome Msg
 │ ✧.tts • Text to speech
+│ ✧.quote • Quotes Send
 ╰─────────────────♡
 
 ╭─ 𓆩👥𓆪 𝐆𝐑𝐎𝐔𝐏 𝐂𝐌𝐃𝐙
