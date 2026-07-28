@@ -52,7 +52,8 @@ const AUTO_VOICE_REPLIES = [
         keywords: ['ponnaya' , 'පොන්නයා'],
         url: '',
         text: '*කවුද හුත්තෝ පොන්නයා තොපේ සියානෙ පොන්නයා 🤬*'
-];
+    }   
+  ];
 
 // Build a matcher once: exact-word match (not "substring anywhere"),
 // so "gm" doesn't fire on "programming" or "mk" on "mkdir" etc.
