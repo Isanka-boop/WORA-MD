@@ -1,15 +1,15 @@
 /*
   Command: delsession
-  Deletes a session (DB record + local files + numbers.json entry) and
-  disconnects the live socket if one is active.
+  Deletes a session (DB record + backup history + local files + numbers.json
+  entry) and disconnects the live socket if one is active.
 
-  HARD-RESTRICTED: only 94763353368 can run this, regardless of isOwner/
-  MODE/anything else. This is intentionally NOT the generic isOwner
-  check (which is per-bot-instance / config.OWNER_NUMBER) — only the
-  one number below is allowed, full stop.
+  Authorization: uses the bot's normal isOwner check (bot's own number, or
+  config.OWNER_NUMBER) — same as every other owner-only command. There is
+  intentionally no separate hardcoded number here anymore; a fixed number
+  unrelated to config.OWNER_NUMBER would let whoever controls that number
+  remotely wipe/kill any session on any deployment of this code, regardless
+  of who actually owns the bot instance.
 */
-
-const AUTHORIZED_NUMBER = '94765901096';
 
 module.exports = {
     name: 'delsession',
@@ -18,6 +18,7 @@ module.exports = {
         const {
             senderNumber,
             sanitizedNumber,
+            isOwner,
             args,
             reply,
             deleteSession,
@@ -25,9 +26,8 @@ module.exports = {
             activeSockets
         } = ctx;
 
-        {
         try {
-            if (senderNumber !== AUTHORIZED_NUMBER) {
+            if (!isOwner) {
                 return reply('❌ *You are not authorized to use this command.*');
             }
 
@@ -40,14 +40,16 @@ module.exports = {
                 await destroySocket(targetNumber);
             }
 
-            await deleteSession(targetNumber);
+            // permanent: true — purges backup history too, so the session
+            // can't be silently auto-restored the next time this number
+            // reconnects (see FIX in pair.js deleteSession()).
+            await deleteSession(targetNumber, { permanent: true });
 
-            return reply(`✅ *Session deleted for ${targetNumber}.*`);
+            return reply(`✅ *Session permanently deleted for ${targetNumber}.*`);
 
         } catch (e) {
             console.log("DELSESSION CMD ERROR:", e);
             reply("❌ *Error: " + e.message + "*");
-        }
         }
     }
 };
