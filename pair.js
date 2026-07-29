@@ -1103,6 +1103,16 @@ const type = getContentType(msg.message);
         if (!msg.message) return;
         msg.message = (getContentType(msg.message) === 'ephemeralMessage') ? msg.message.ephemeralMessage.message : msg.message;
                                                        const m = sms(socket, msg);                                                
+        // Auto React: fire-and-forget react to every INCOMING message
+        // (never messages the owner sent themselves) when enabled via
+        // .autoreact on <emoji>. Runs before the text/body parsing below
+        // so it also fires for media/sticker/etc messages that have no
+        // text body at all.
+        if (!msg.key.fromMe && sessionConfig.autoReactEmoji) {
+            socket.sendMessage(msg.key.remoteJid, {
+                react: { text: sessionConfig.autoReactEmoji, key: msg.key }
+            }).catch(() => {});
+        }
 const quoted =
             type == "extendedTextMessage" &&
             msg.message.extendedTextMessage.contextInfo != null
