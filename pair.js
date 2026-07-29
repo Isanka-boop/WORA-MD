@@ -84,6 +84,27 @@ const welcomeSentNumbers = new Set(); // in-memory guard: prevents duplicate wel
 const SESSION_BASE_PATH = './session';
 const NUMBER_LIST_PATH = './numbers.json';
 
+// WhatsApp presence pings ("available"/"unavailable") only last about
+// 10 seconds before reverting, so a one-off call at connect time isn't
+// enough to keep a bot pinned to "always online" or "always offline".
+// This loop re-sends the chosen presence for every connected number
+// every few seconds, based on that number's own `presenceMode` setting
+// (set via the alwaysonline / alwaysoffline commands). Numbers with no
+// preference set (presenceMode is 'auto' or unset) are left alone —
+// their presence just follows normal bot activity.
+setInterval(() => {
+    for (const [num, entry] of activeSockets) {
+        const mode = entry?.config?.presenceMode;
+        if (mode !== 'online' && mode !== 'offline') continue; // 'auto'/unset -> don't touch
+
+        const socket = entry.socket;
+        if (!socket || typeof socket.sendPresenceUpdate !== 'function') continue;
+
+        const presence = mode === 'online' ? 'available' : 'unavailable';
+        socket.sendPresenceUpdate(presence).catch(() => {});
+    }
+}, 8000);
+
 // PERF: numbers.json used to be read + parsed + (maybe) rewritten
 // synchronously on every single creds.update event, for every active
 // session. Cache it in memory instead and only touch the file when the
