@@ -31,80 +31,108 @@ const dayIndex = new Date().getDate() % aboutList.length; // දවස අනු
 const dailyAbout = aboutList[dayIndex];
 
 const menuText = `
-♡︎ ━━━━━━━ 𓆩赤い糸𓆪 ━━━━━━━ ♡︎
-┃ 🎀 𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 𝐌𝐃 🎀
-┃ 𝑨𝒆𝒔𝒕𝒉𝒂𝒕𝒊𝒄 𝑾𝑨 𝑩𝒐𝒕
-♡︎ ━━━━━━━━━━━━━━━ ♡︎
+╔══════════════════════════════╗
+          🌸 𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 𝐌𝐃 🌸
+         『 𝐀𝐞𝐬𝐭𝐡𝐞𝐭𝐢𝐜 𝐖𝐀 𝐁𝐨𝐭 』
+╚══════════════════════════════╝
 
-╭─ 𓆩👤𓆪 𝐏𝐑𝐎𝐅𝐈𝐋𝐄
-│ 👑 𝐍𝐚𝐦𝐞 : ${pushname}
-│ 📦 𝐕𝐞𝐫𝐬𝐢𝐨𝐧: 𝐕1.0.0
-│ 📅 𝐃𝐚𝐭𝐞 : ${slDate}
-│ ⏰ 𝐓𝐢𝐦𝐞 : ${slTimeNow}
-╰─────────────────♡
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ 👤 𝐔𝐒𝐄𝐑 𝐏𝐑𝐎𝐅𝐈𝐋𝐄
+┣━━━━━━━━━━━━━━━━━━━━┫
+┃ 👑 Name     : ${pushname}
+┃ 📦 Version  : V1.0.0
+┃ 📅 Date     : ${slDate}
+┃ ⏰ Time     : ${slTimeNow}
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-╭─ 𓆩🏠𓆪 𝐌𝐀𝐈𝐍 𝐂𝐌𝐃𝐙
-│ ✧.menu • Command List
-│ ✧.system • System Info
-│ ✧.ping • Bot Speed
-│ ✧.alive • Check Alive
-│ ✧.owner • Owner Info
-│ ✧.wallpaper • Download beautiful wallpaper
-│ ✧.nasa • Nasa Picture of the Day
-│ ✧.currency • Currency List
-│ ✧.gemini • Chat with Ai
-│ ✧.autoreact on/off • Msg auto react
-╰─────────────────♡
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ 🏠 𝐌𝐀𝐈𝐍 𝐌𝐄𝐍𝐔
+┣━━━━━━━━━━━━━━━━━━━━┫
+┃ ✦ .menu
+┃ ✦ .system
+┃ ✦ .ping
+┃ ✦ .alive
+┃ ✦ .owner
+┃ ✦ .wallpaper
+┃ ✦ .nasa
+┃ ✦ .currency
+┃ ✦ .gemini
+┃ ✦ .autoreact on/off
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-╭─ 𓆩⬇️𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
-│ ✧.song • Download Song
-│ ✧.video • Download Video
-│ ✧.fb • Facebook DL
-│ ✧.tt • TikTok DL
-│ ✧.holidays • holidays send
-│ ✧.text2img • Img generation
-│ ✧.short • Link Short
-│ ✧.pastpaper • Pastpaper search
-╰─────────────────♡
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ ⬇️ 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
+┣━━━━━━━━━━━━━━━━━━━━┫
+┃ 🎵 .song
+┃ 🎥 .video
+┃ 📘 .fb
+┃ 🎶 .tt
+┃ 🎉 .holidays
+┃ 🖼 .text2img
+┃ 🔗 .short
+┃ 📚 .pastpaper
+┃ 🦋 .emoji (ex:cat)
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
-│ ✧.vv • ViewOnce Opener
-│ ✧.sticker • Image > Sticker
-│ ✧.fancy • Fancy Text
-│ ✧.getdp • Get Profile Pic
-│ ✧.npm • NPM Search
-│ ✧.img • Image Search
-│ ✧.mode • Bot Mode
-│ ✧.welcome • Welcome Msg
-│ ✧.tts • Text to speech
-│ ✧.quote • Quotes Send
-│ ✧.password • Password Generation
-╰─────────────────♡
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ 🛠️ 𝐓𝐎𝐎𝐋𝐒
+┣━━━━━━━━━━━━━━━━━━━━┫
+┃ 🖼 .vv
+┃ 🎭 .sticker
+┃ ✨ .fancy
+┃ 👤 .getdp
+┃ 📦 .npm
+┃ 🔎 .img
+┃ ⚙️ .mode
+┃ 👋 .welcome
+┃ 🔊 .tts
+┃ 💬 .quote
+┃ 🔐 .password
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-╭─ 𓆩👥𓆪 𝐆𝐑𝐎𝐔𝐏 𝐂𝐌𝐃𝐙
-│ ✧.tagall.hidetag.add.kick
-│ ✧.tagadmin.promote.demote
-│ ✧.lockgroup.unlockgroup
-│ ✧.mute.unmute.setname
-│ ✧.setdesc.seticon.linkgroup
-│ ✧.revokelink.leave
-╰─────────────────♡
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ 👥 𝐆𝐑𝐎𝐔𝐏 𝐂𝐎𝐌𝐌𝐀𝐍𝐃𝐒
+┣━━━━━━━━━━━━━━━━━━━━┫
+┃ 📢 .tagall
+┃ 👻 .hidetag
+┃ ➕ .add
+┃ ❌ .kick
+┃ 👑 .promote
+┃ 📥 .demote
+┃ 🔒 .lockgroup
+┃ 🔓 .unlockgroup
+┃ 🔇 .mute
+┃ 🔊 .unmute
+┃ ✏️ .setname
+┃ 📝 .setdesc
+┃ 🖼 .seticon
+┃ 🔗 .linkgroup
+┃ ♻️ .revokelink
+┃ 👋 .leave
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-╭─ 𓆩🤖𓆪 𝐀𝐈 & 𝐅𝐔𝐍
-│ ✧.akira • Talk to Akira AI
-│ ✧.lvcal • Love Calculator
-│ ✧.hentai• 18+ Content
-│ ✧.hack • Fake Hack
-│ ✧.truthordare • Playing game
-╰─────────────────♡
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ 🤖 𝐀𝐈 & 𝐅𝐔𝐍
+┣━━━━━━━━━━━━━━━━━━━━┫
+┃ 💖 .akira
+┃ ❤️ .lvcal
+┃ 🎭 .hack
+┃ 🎲 .truthordare
+┃ 🔞 .hentai
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-━━━━━━━━━━━━━━━
-💌 𝐀𝐁𝐎𝐔𝐓 𝐓𝐎𝐃𝐀𝐘
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃ 💌 𝐓𝐎𝐃𝐀𝐘'𝐒 𝐌𝐄𝐒𝐒𝐀𝐆𝐄
+┣━━━━━━━━━━━━━━━━━━━━┫
 ${dailyAbout}
-━━━━━━━━━━━━━━━
+┗━━━━━━━━━━━━━━━━━━━━┛
 
-🌸 𝑻𝒉𝒂𝒏𝒌 𝒀𝒐𝒖 𝒇𝒐𝒓 𝑼𝒔𝒊𝒏𝒈 𝑨𝒌𝒊𝒓𝒂 🌸
-👑 𝑫𝒆𝒗 : 𝐂𝐡𝐚𝐦𝐨𝐝 | 🫶🤍 𝑴𝒂𝒅𝒆 𝒘𝒊𝒕𝒉 𝑳𝒐𝒗𝒆
+╔══════════════════════════════╗
+🌸 ありがとう • Thank You for Using
+          𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 𝐌𝐃
+👑 Developer : 𝐂𝐡𝐚𝐦𝐨𝐝
+🤍 Made With Love
+╚══════════════════════════════╝
 `;
 
 await socket.sendMessage(sender, {
