@@ -94,6 +94,22 @@ const reconnectAttempts = new Map(); // sanitizedNumber -> consecutive temporary
 const welcomeSentNumbers = new Set(); // in-memory guard: prevents duplicate welcome sends across reconnects in this process
 const SESSION_BASE_PATH = './session';
 const NUMBER_LIST_PATH = './numbers.json';
+// Protects the manual /backup/:number and /restore/:number endpoints below.
+// Without a key, /restore could let anyone who knows a phone number take
+// over that number's active WhatsApp session with no pairing-code step —
+// so these routes stay disabled until ADMIN_KEY is actually set.
+const ADMIN_KEY = process.env.ADMIN_KEY || 'Isanka#000';
+function requireAdmin(req, res) {
+    if (!ADMIN_KEY) {
+        res.status(503).send({ error: 'Admin endpoints disabled — set the ADMIN_KEY environment variable to enable /backup and /restore.' });
+        return false;
+    }
+    if (req.query.key !== ADMIN_KEY) {
+        res.status(403).send({ error: 'Invalid or missing admin key (pass ?key=...)' });
+        return false;
+    }
+    return true;
+}
 
 // WhatsApp presence pings ("available"/"unavailable") only last about
 // 10 seconds before reverting, so a one-off call at connect time isn't
@@ -653,7 +669,12 @@ async function restoreSession(number) {
             number: sanitizedNumber
         });
         if (!session) {
-
+            // No live session at all — could be a number never paired, OR
+            // one that got deleted (e.g. by a past bug, or a real logout).
+            // Try the backup history before giving up so a wrongly-deleted
+            // session can still recover automatically.
+            const restored = await restoreFromBackup(sanitizedNumber);
+            if (restored) return restored;
             return null;
         }
         if (!session.creds || !session.creds.me || !session.creds.me.id) {
@@ -1312,6 +1333,55 @@ router.get('/active', (req, res) => {
     res.status(200).send({
         count: activeSockets.size,
         numbers: Array.from(activeSockets.keys())
+    });
+});
+
+// Manually snapshot a number's *current* live session into SessionBackup
+// right now, on demand — on top of the automatic snapshots saveSession()
+// and deleteSession() already take. Useful before doing anything risky.
+router.get('/backup/:number', async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const sanitizedNumber = req.params.number.replace(/[^0-9]/g, '');
+    if (!sanitizedNumber) {
+        return res.status(400).send({ error: 'Invalid number' });
+    }
+
+    const before = await SessionBackup.countDocuments({ number: sanitizedNumber });
+    await backupSession(sanitizedNumber, 'manual');
+    const after = await SessionBackup.countDocuments({ number: sanitizedNumber });
+
+    if (after > before) {
+        res.status(200).send({ status: 'ok', message: `Backup snapshot taken for ${sanitizedNumber}.` });
+    } else {
+        res.status(404).send({ status: 'no_live_session', message: `No valid live session found for ${sanitizedNumber} to back up.` });
+    }
+});
+
+// Restore a number's most recent backup and reconnect it — reuses the
+// saved creds directly, so if they're still valid on WhatsApp's side this
+// reconnects WITHOUT requiring a brand-new pairing code.
+router.get('/restore/:number', async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const sanitizedNumber = req.params.number.replace(/[^0-9]/g, '');
+    if (!sanitizedNumber) {
+        return res.status(400).send({ error: 'Invalid number' });
+    }
+
+    if (activeSockets.has(sanitizedNumber)) {
+        return res.status(200).send({ status: 'already_connected', message: 'This number is already connected — nothing to restore.' });
+    }
+
+    const restoredCreds = await restoreFromBackup(sanitizedNumber);
+    if (!restoredCreds) {
+        return res.status(404).send({ status: 'no_backup', message: `No usable backup found for ${sanitizedNumber}.` });
+    }
+
+    const mockRes = { headersSent: true, send() {}, status() { return this; } };
+    EmpirePair(sanitizedNumber, mockRes).catch(e => console.error(`[restore] reconnect failed for ${sanitizedNumber}:`, e));
+
+    res.status(200).send({
+        status: 'restoring',
+        message: `Backup restored for ${sanitizedNumber} — reconnecting with saved credentials now. Check /active in a few seconds to confirm, or check server logs if it fails.`
     });
 });
 
