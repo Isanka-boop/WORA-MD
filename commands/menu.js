@@ -53,6 +53,7 @@ const menuText = `
 │ ✧.nasa • Nasa Picture of the Day
 │ ✧.currency • Currency List
 │ ✧.gemini • Chat with Ai
+│ ✧.autoreact on/off • Msg auto react
 ╰─────────────────♡
 
 ╭─ 𓆩⬇️𓆪 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃
