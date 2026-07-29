@@ -13,7 +13,14 @@ module.exports = {
     name: 'alwaysonline',
     aliases: ['online'],
     execute: async (ctx) => {
-        const { sessionConfig, sanitizedNumber, updateUserConfig, args, reply, activeSockets } = ctx;
+        const { sessionConfig, sanitizedNumber, updateUserConfig, args, reply, activeSockets, isOwner } = ctx;
+
+        // Only the person who paired/connected this bot number (or a
+        // global developer) may change its presence setting — anyone
+        // else messaging the bot is blocked from touching it.
+        if (!isOwner) {
+            return reply('❌ *This command can only be used by the bot owner.*');
+        }
 
         // The live socket entry in activeSockets can hold a *different*
         // config object than ctx.sessionConfig after a reconnect refresh —
