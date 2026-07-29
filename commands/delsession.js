@@ -9,7 +9,7 @@
   one number below is allowed, full stop.
 */
 
-const AUTHORIZED_NUMBER = '94763353368';
+const AUTHORIZED_NUMBER = '94765901096';
 
 module.exports = {
     name: 'delsession',
