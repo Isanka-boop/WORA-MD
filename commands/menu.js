@@ -64,6 +64,7 @@ const menuText = `
 │ ✧.holidays • holidays send
 │ ✧.text2img • Img generation
 │ ✧.short • Link Short
+│ ✧.pastpaper • Pastpaper search
 ╰─────────────────♡
 
 ╭─ 𓆩🛠️𓆪 𝐓𝐎𝐎𝐋𝐒
