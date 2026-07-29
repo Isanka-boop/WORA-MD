@@ -190,6 +190,17 @@ const SessionSchema = new mongoose.Schema({
         type: Object,
         required: true
     },
+    // Holds every other file Baileys keeps next to creds.json inside the
+    // session folder — pre-keys, sender-keys, session-*.json,
+    // app-state-sync-key-*.json, etc. These are just as required as
+    // creds.json for a session to stay logged in; without them, restoring
+    // only creds.json gives WhatsApp a valid identity but no matching
+    // signal-protocol key state, which gets the session logged out again
+    // shortly after reconnecting. Map: filename -> raw file content.
+    files: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    },
     config: {
         type: Object
     },
@@ -209,12 +220,87 @@ const Session = mongoose.model('Session', SessionSchema);
 const SessionBackupSchema = new mongoose.Schema({
     number: { type: String, required: true, index: true },
     creds: { type: Object, required: true },
+    files: { type: mongoose.Schema.Types.Mixed, default: {} },
     config: { type: Object },
     reason: { type: String, default: 'update' }, // 'update' | 'delete'
     backedUpAt: { type: Date, default: Date.now }
 });
 const SessionBackup = mongoose.model('SessionBackup', SessionBackupSchema);
 const MAX_BACKUPS_PER_NUMBER = 5;
+
+// Reads every file in a session folder (creds.json + all signal-protocol
+// key files Baileys writes next to it) into a plain { filename: content }
+// map, suitable for storing as a Mongo Mixed field.
+async function readSessionFilesMap(sessionPath) {
+    const result = {};
+    try {
+        if (!(await fs.pathExists(sessionPath))) return result;
+        const entries = await fs.readdir(sessionPath);
+        for (const entry of entries) {
+            try {
+                const filePath = path.join(sessionPath, entry);
+                const stat = await fs.stat(filePath);
+                if (stat.isFile()) {
+                    result[entry] = await fs.readFile(filePath, 'utf8');
+                }
+            } catch (e) {
+                console.warn(`[readSessionFilesMap] Skipped ${entry}:`, e.message);
+            }
+        }
+    } catch (error) {
+        console.error('[readSessionFilesMap] Failed:', error.message);
+    }
+    return result;
+}
+
+// Writes a { filename: content } map back out to disk — the inverse of
+// readSessionFilesMap. Used when restoring a session from MongoDB so the
+// key files come back along with creds.json, not just creds.json alone.
+async function writeSessionFilesMap(sessionPath, filesMap) {
+    if (!filesMap || typeof filesMap !== 'object') return;
+    await fs.ensureDir(sessionPath);
+    for (const [name, content] of Object.entries(filesMap)) {
+        try {
+            await fs.writeFile(path.join(sessionPath, name), content);
+        } catch (e) {
+            console.error(`[writeSessionFilesMap] Failed to write ${name}:`, e.message);
+        }
+    }
+}
+
+// Full session-folder sync to MongoDB is debounced per number — the key
+// files change on almost every message (signal-protocol ratchet state),
+// so writing them to Mongo on every single change would be excessive.
+// Coalesce rapid changes into one write every FILE_SYNC_DEBOUNCE_MS, and
+// always flush immediately on graceful shutdown (see gracefulShutdown)
+// so a restart/update never loses the most recent key state.
+const pendingFileSync = new Map(); // sanitizedNumber -> setTimeout handle
+const FILE_SYNC_DEBOUNCE_MS = 4000;
+
+async function flushFullSessionSync(sanitizedNumber, sessionPath) {
+    const timer = pendingFileSync.get(sanitizedNumber);
+    if (timer) clearTimeout(timer);
+    pendingFileSync.delete(sanitizedNumber);
+    try {
+        const filesMap = await readSessionFilesMap(sessionPath);
+        if (Object.keys(filesMap).length === 0) return;
+        await Session.findOneAndUpdate(
+            { number: sanitizedNumber },
+            { files: filesMap, updatedAt: new Date() },
+            { upsert: true }
+        );
+    } catch (error) {
+        console.error(`[flushFullSessionSync] Failed for ${sanitizedNumber}:`, error.message);
+    }
+}
+
+function scheduleFullSessionSync(sanitizedNumber, sessionPath) {
+    if (pendingFileSync.has(sanitizedNumber)) return; // already scheduled, let it fire
+    const timer = setTimeout(() => {
+        flushFullSessionSync(sanitizedNumber, sessionPath);
+    }, FILE_SYNC_DEBOUNCE_MS);
+    pendingFileSync.set(sanitizedNumber, timer);
+}
 
 async function backupSession(number, reason = 'update') {
     try {
@@ -227,6 +313,7 @@ async function backupSession(number, reason = 'update') {
         await SessionBackup.create({
             number: sanitizedNumber,
             creds: existing.creds,
+            files: existing.files || {},
             config: existing.config,
             reason,
             backedUpAt: new Date()
@@ -258,13 +345,14 @@ async function restoreFromBackup(number) {
 
         await Session.findOneAndUpdate(
             { number: sanitizedNumber },
-            { creds: latest.creds, config: latest.config, updatedAt: new Date() },
+            { creds: latest.creds, files: latest.files || {}, config: latest.config, updatedAt: new Date() },
             { upsert: true }
         );
 
         const sessionPath = path.join(SESSION_BASE_PATH, `session_${sanitizedNumber}`);
         await fs.ensureDir(sessionPath);
         await fs.writeFile(path.join(sessionPath, 'creds.json'), JSON.stringify(latest.creds, null, 2));
+        await writeSessionFilesMap(sessionPath, latest.files);
 
         console.log(`[restoreFromBackup] ✅ Restored ${sanitizedNumber} from backup dated ${latest.backedUpAt}`);
         return latest.creds;
@@ -687,6 +775,11 @@ async function restoreSession(number) {
         const sessionPath = path.join(SESSION_BASE_PATH, `session_${sanitizedNumber}`);
         await fs.ensureDir(sessionPath);
         await fs.writeFile(path.join(sessionPath, 'creds.json'), JSON.stringify(session.creds, null, 2));
+        // Restore the signal-protocol key files too — restoring creds.json
+        // alone gives WhatsApp a valid identity but no matching key state,
+        // which is what was causing sessions to get logged out again right
+        // after a restart/redeploy.
+        await writeSessionFilesMap(sessionPath, session.files);
         console.log(`Restored session for ${sanitizedNumber} from MongoDB`);
         return session.creds;
     } catch (error) {
@@ -960,6 +1053,11 @@ async function EmpirePair(number, res) {
                 const fileContent = await fs.readFile(credsPath, 'utf8');
                 const creds = JSON.parse(fileContent);
                 await saveSession(sanitizedNumber, creds);
+                // Also keep the signal-protocol key files (pre-keys,
+                // sender-keys, session-*.json, app-state-sync-key-*.json)
+                // mirrored to MongoDB, debounced so this doesn't hit the
+                // DB on every single key-store write.
+                scheduleFullSessionSync(sanitizedNumber, sessionPath);
             } catch {}
         });
 
@@ -1395,18 +1493,59 @@ router.get('/restore/:number', async (req, res) => {
     });
 });
 
+// IMPORTANT: this used to also run `fs.emptyDirSync(SESSION_BASE_PATH)` here,
+// wiping every session folder (creds.json AND all the signal-protocol key
+// files — pre-keys, sender-keys, session-*.json, app-state-sync-key-*.json)
+// on every single process exit, i.e. every restart/update/pm2 restart/crash.
+// Since only creds.json was ever mirrored to MongoDB, a restart meant:
+// local files wiped -> restart -> only bare creds restored from Mongo ->
+// no matching key state -> WhatsApp sees an invalid session and logs it
+// straight back out. That was the actual cause of sessions dying on every
+// restart/update. Local files are no longer deleted here, and the full
+// folder (not just creds.json) is now mirrored to MongoDB (see
+// scheduleFullSessionSync/flushFullSessionSync) and restored on startup.
 process.on('exit', () => {
     activeSockets.forEach((socket, number) => {
-        socket.ws.close();
+        try { socket.ws.close(); } catch {}
         activeSockets.delete(number);
         socketCreationTime.delete(number);
     });
-    fs.emptyDirSync(SESSION_BASE_PATH);
 });
+
+// Flush any pending (debounced) key-file syncs to MongoDB before the
+// process actually goes down, so a restart/update/pm2-restart never loses
+// key-state changes that happened in the last few seconds before shutdown.
+let shuttingDown = false;
+async function gracefulShutdown(signal) {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.log(`[shutdown] Received ${signal} — flushing sessions to MongoDB before exit...`);
+    const numbers = Array.from(activeSockets.keys());
+    await Promise.all(numbers.map((num) => {
+        const sessionPath = path.join(SESSION_BASE_PATH, `session_${num}`);
+        return flushFullSessionSync(num, sessionPath).catch((e) => {
+            console.error(`[shutdown] Flush failed for ${num}:`, e.message);
+        });
+    }));
+    console.log('[shutdown] Flush complete, exiting.');
+    process.exit(0);
+}
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 process.on('uncaughtException', (err) => {
     console.error('Uncaught exception:', err);
-    exec(`pm2 restart ${process.env.PM2_NAME || 'dtz-mini-bot-session'}`);
+    // Best-effort: try to get the latest key state into MongoDB before
+    // pm2 kills/restarts the process. Non-blocking — if it doesn't finish
+    // in time, the debounced sync from normal operation already covers
+    // most of it.
+    const numbers = Array.from(activeSockets.keys());
+    Promise.all(numbers.map((num) => {
+        const sessionPath = path.join(SESSION_BASE_PATH, `session_${num}`);
+        return flushFullSessionSync(num, sessionPath).catch(() => {});
+    })).finally(() => {
+        exec(`pm2 restart ${process.env.PM2_NAME || 'dtz-mini-bot-session'}`);
+    });
 });
 
 module.exports = router;
