@@ -780,14 +780,6 @@ async function EmpirePair(number, res) {
                     activeSockets.set(sanitizedNumber, { socket, config: freshConfig });
                     console.log(`📌 Socket registered in activeSockets for ${sanitizedNumber}`);
 
-                    // Explicitly mark presence as unavailable so the bot doesn't
-                    // show up as "always online" on WhatsApp.
-                    try {
-                        await socket.sendPresenceUpdate('unavailable');
-                    } catch (presenceErr) {
-                        console.log(`⚠️ Failed to set presence to unavailable for ${sanitizedNumber}:`, presenceErr.message);
-                    }
-
                     // Only run the one-time welcome/newsletter flow once per number.
                     // Without this guard, every reconnect (which re-runs this whole
                     // 'open' handler on a brand-new socket) would resend it.
