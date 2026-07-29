@@ -97,7 +97,7 @@ module.exports = {
                 const url = (item && (item.url || item.link || item.href)) || '';
                 out += `*${i + 1}.* ${title}\n${url}\n\n`;
             });
-            out += `_Get download links:_ \`pastpaper dl <url from above>\``;
+            out += `_Get download links:_ \`.pastpaper dl <url from above>\``;
 
             reply(out.trim());
 
