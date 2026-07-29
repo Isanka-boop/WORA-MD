@@ -60,7 +60,6 @@ const menuText = `
 │ ✧.video • Download Video
 │ ✧.fb • Facebook DL
 │ ✧.tt • TikTok DL
-│ ✧.sinhalasub • sinhalasub download
 │ ✧.holidays • holidays send
 │ ✧.text2img • Img generation
 │ ✧.short • Link Short
