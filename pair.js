@@ -1460,6 +1460,19 @@ router.get('/', async (req, res) => {
         });
     }
 
+    // If this number has an old session on record (e.g. it was unlinked
+    // from "Linked Devices" on the phone itself, rather than via the bot's
+    // own delsession command), those saved creds are now invalid on
+    // WhatsApp's side but still say `registered: true`. EmpirePair() only
+    // requests a NEW pairing code when `registered` is false — so without
+    // this, it would silently try to reconnect with the dead creds instead,
+    // never call `res.send()`, and the pairing page would just hang forever
+    // with no code ever shown. Since we already know (check above) this
+    // number isn't currently active, wipe the stale session first so the
+    // user coming back to manually pair always gets a fresh code. A backup
+    // snapshot is still taken (non-permanent delete), so nothing is lost.
+    await deleteSession(sanitizedNumber);
+
     await EmpirePair(number, res);
 });
 
