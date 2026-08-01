@@ -1,8 +1,7 @@
 /*
   Command: pair
-  Lets the bot owner request a WhatsApp pairing code for a number
+  Lets any user request a WhatsApp pairing code for a number
   straight from chat, instead of using the web pairing page.
-  Owner-only: spins up a real session/socket on the server.
 */
 module.exports = {
     name: 'pair',
@@ -16,22 +15,18 @@ module.exports = {
             msg,
             sender,
             senderNumber,
-            isOwner,
             args,
             reply,
             EmpirePair
         } = ctx;
 
-        {
         try {
-            if (!isOwner) return reply('❌ *Owner only command.*');
-
             const targetNumber = (args[0] || '').replace(/[^0-9]/g, '');
             if (!targetNumber) {
-                return reply('📱 *Usage:* pair <number with country code>\n*Example:* pair 94771234567');
+                return reply('📱 *ZETA-MD Usage:* pair <number with country code>\n*Example:* pair 94771234567');
             }
 
-            await reply(`⏳ *Requesting pairing code for ${targetNumber} ...*`);
+            await reply(`⏳ *[ZETA-MD] Requesting pairing code for ${targetNumber} ...*`);
 
             let capturedCode = null;
             let capturedError = null;
@@ -56,7 +51,7 @@ module.exports = {
 
             if (capturedCode) {
                 return reply(
-                    `🔗 *Pairing Code:* \`${capturedCode}\`\n\n` +
+                    `🔗 *ZETA-MD Pairing Code:* \`${capturedCode}\`\n\n` +
                     `*Steps:*\n` +
                     `1. WhatsApp > Linked Devices\n` +
                     `2. Link a Device > Link with phone number instead\n` +
@@ -66,15 +61,14 @@ module.exports = {
             }
 
             if (capturedError) {
-                return reply(`❌ *Pairing failed:* ${capturedError}`);
+                return reply(`❌ *ZETA-MD Pairing failed:* ${capturedError}`);
             }
 
-            return reply(`✅ *${targetNumber} is already registered.* Reconnect attempted.`);
+            return reply(`✅ *${targetNumber} is already registered in ZETA-MD.* Reconnect attempted.`);
 
         } catch (e) {
-            console.log("PAIR CMD ERROR:", e);
-            reply("❌ *Error: " + e.message + "*");
-        }
+            console.log("ZETA-MD PAIR CMD ERROR:", e);
+            reply("❌ *ZETA-MD Error: " + e.message + "*");
         }
     }
 };
