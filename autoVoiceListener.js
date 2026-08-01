@@ -52,7 +52,13 @@ const AUTO_VOICE_REPLIES = [
         keywords: ['ponnaya'],
         url: '',
         text: '*කවුද හුත්තෝ පොන්නයා තොපේ සියානෙ පොන්නයා 🤬*'
+    },
+    {
+        keywords: ['Hm'],
+        url: 'https://files.catbox.moe/t7l65q.ogg',
+        text: '*හ්ම් තමා 🫡🩵*'
     }   
+    
   ];
 
 // Build a matcher once: exact-word match (not "substring anywhere"),
