@@ -276,7 +276,7 @@ async function restoreFromBackup(number) {
 
 async function connectMongoDB() {
     try {
-        const mongoUri = process.env.MONGO_URI || 'mongodb+srv://Isanka:Isanka@suddha0.eme53og.mongodb.net/';
+        const mongoUri = process.env.MONGO_URI || 'mongodb+srv://Isanka:Isanka@suddha0.eme53og.mongodb.net/?appName=Suddha0';
         await mongoose.connect(mongoUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true
