@@ -115,7 +115,7 @@ module.exports = {
             const slDate = moment().tz('Asia/Colombo').format('YYYY-MM-DD');
             const slTimeNow = moment().tz('Asia/Colombo').format('HH:mm:ss');
 
-            const searchCaption = `*↳ ❝ [🎀 𝗔𝗸𝗶𝗿𝗮 𝗚𝗶𝗿𝗹 𝗩𝗶𝗱𝗲𝗼 🎀] ¡! ❞*\n\n` +
+            const searchCaption = `*↳ ❝ [🎀 𝗭𝗲𝘁𝗮 𝗚𝗶𝗿𝗹 𝗦𝗼𝗻𝗴 🎀] ¡! ❞*\n\n` +
                 `> *\`🎵 𝚃𝙸𝚃𝙻𝙴 :\`* ${video.title}\n` +
                 `> *\`👤 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 :\`* ${video.author.name}\n` +
                 `> *\`⏱️ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 :\`* ${video.timestamp}\n` +
