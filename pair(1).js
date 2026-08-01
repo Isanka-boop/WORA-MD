@@ -390,8 +390,8 @@ async function restoreFromBackup(number) {
 // and, if the credentials stop working, the direct cause of the H12
 // timeouts below (every DB call blocks for serverSelectionTimeoutMS
 // instead of failing fast). MONGO_URI must now be set via env var.
-async function connectMongoDB() {
-    const mongoUri = process.env.MONGO_URI;
+async function connectMongoDB() 
+    const mongoUri = process.env.MONGO_URI;'mongodb+srv://Isanka:cL23C95CjnI9zqgF@suddha0.eme53og.mongodb.net/?appName=Suddha0';
     if (!mongoUri) {
         console.error('MONGO_URI env var is not set — refusing to start with a hardcoded fallback. Set MONGO_URI in Config Vars.');
         process.exit(1);
