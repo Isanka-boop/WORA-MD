@@ -116,7 +116,6 @@ const menuText = `
 ┣━━━━━━━━━━━━━━━━━━━━┫
 ┃ 💖 .akira
 ┃ ❤️ .lvcal
-┃ 🎭 .hack
 ┃ 🎲 .truthordare
 ┃ 🔞 .hentai
 ┗━━━━━━━━━━━━━━━━━━━━┛
