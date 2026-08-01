@@ -140,7 +140,7 @@ module.exports = {
                 await socket.sendMessage(sender, {
                     image: { url: video.thumbnail },
                     caption: searchCaption,
-                    footer: '🎀 Akira Girl Music',
+                    footer: '🎀 ZETA-MD Music',
                     buttons: songButtons,
                     headerType: 4,
                     contextInfo: arabianCtx()

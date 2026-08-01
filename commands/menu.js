@@ -1,6 +1,6 @@
 /*
 Command: menu, list, panel
-AKIRA GIRL MD - Aesthetic Menu v2
+ZETA-MD - Aesthetic Menu v2
 */
 module.exports = {
 name: 'menu',
@@ -20,7 +20,7 @@ const slTimeNow = moment().tz('Asia/Colombo').format('HH:mm:ss');
 const aboutList = [
   "🌸 \"Soft girls run the world with kindness and code.\"",
   "💖 \"Be the girl who decided to go for it.\"",
-  "🦋 \"Akira is not just a bot, she's your vibe.\"",
+  "🦋 \"ZETA-MD is not just a bot, she's your vibe.\"",
   "✨ \"Dream big, code harder, glow up daily.\"",
   "🌙 \"Late nights + Coffee + Code = Magic\"",
   "🎀 \"Elegance is the only beauty that never fades.\"",
@@ -32,7 +32,7 @@ const dailyAbout = aboutList[dayIndex];
 
 const menuText = `
 ╔══════════════════════════════╗
-          🌸 𝐀𝐊𝐈𝐑𝐀 𝐆𝐈𝐑𝐋 𝐌𝐃 🌸
+          🌸 𝐙𝐄𝐓𝐀-𝐌𝐃 🌸
          『 𝐀𝐞𝐬𝐭𝐡𝐞𝐭𝐢𝐜 𝐖𝐀 𝐁𝐨𝐭 』
 ╚══════════════════════════════╝
 
@@ -114,7 +114,7 @@ const menuText = `
 ┏━━━━━━━━━━━━━━━━━━━━┓
 ┃ 🤖 𝐀𝐈 & 𝐅𝐔𝐍
 ┣━━━━━━━━━━━━━━━━━━━━┫
-┃ 💖 .akira
+┃ 💖 .zeta
 ┃ ❤️ .lvcal
 ┃ 🎲 .truthordare
 ┃ 🔞 .hentai
